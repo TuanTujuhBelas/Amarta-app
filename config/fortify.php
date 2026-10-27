@@ -45,7 +45,7 @@ return [
     |
     */
 
-    'username' => 'email',
+    'username' => env('FORTIFY_USERNAME', 'username'),
 
     'email' => 'email',
 

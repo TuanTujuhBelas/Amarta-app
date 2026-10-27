@@ -135,72 +135,128 @@
             </div>
         @endif
 
-        <!-- KARTU PROFIL ATLET LENGKAP -->
-        <div class="bg-white dark:bg-neutral-900 rounded-2xl p-6 md:p-8 border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-6">
-            <div class="flex flex-col md:flex-row items-center md:items-start gap-6 border-b pb-6 dark:border-neutral-800">
+        <!-- KARTU ANGGOTA ATLET (SESUAI PRD BAGIAN 5) -->
+        <div class="bg-white dark:bg-neutral-900 rounded-3xl p-6 md:p-8 shadow-xl border-2 border-royal-blue/30 max-w-2xl mx-auto space-y-6">
+            <!-- Header Kartu -->
+            <div class="flex items-center gap-4 pb-4 border-b-2 border-royal-blue">
+                <img src="{{ asset('gama.png') }}" class="size-16 object-contain" alt="Logo Garuda Amarta" />
+                <div>
+                    <h2 class="text-2xl font-black text-royal-blue dark:text-blue-400 tracking-wide uppercase">GARUDA AMARTA</h2>
+                    <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400 tracking-widest uppercase">KARTU ANGGOTA ATLET</h3>
+                </div>
+            </div>
+
+            <!-- Body Kartu -->
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 py-2">
                 @php $fotoUrl = \App\Services\R2StorageService::url($student->photo); @endphp
-                @if ($fotoUrl)
-                    <img src="{{ $fotoUrl }}" class="w-28 h-36 object-cover rounded-xl border-2 border-royal-blue shadow" alt="{{ $student->nama_lengkap }}" />
-                @else
-                    <div class="w-28 h-36 rounded-xl bg-neutral-200 dark:bg-neutral-800 flex items-center justify-center text-neutral-400 text-xs">
-                        Foto 3x4
-                    </div>
-                @endif
-
-                <div class="flex-1 text-center md:text-left space-y-2">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
-                        <div>
-                            <h2 class="text-2xl font-black text-neutral-900 dark:text-white">{{ $student->nama_lengkap }}</h2>
-                            <p class="text-xs font-mono font-bold text-royal-blue dark:text-blue-400 mt-0.5">{{ $student->account->id_position }}</p>
+                <div class="shrink-0">
+                    @if ($fotoUrl)
+                        <img src="{{ $fotoUrl }}" class="w-32 h-44 object-cover rounded-xl border-2 border-amber-500 shadow-md" alt="{{ $student->nama_lengkap }}" />
+                    @else
+                        <div class="w-32 h-44 rounded-xl bg-neutral-100 dark:bg-neutral-800 border-2 border-dashed border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-xs text-neutral-400">
+                            FOTO PROFIL (ATLET)
                         </div>
-                        <button wire:click="downloadPdf" class="min-h-[40px] px-4 rounded-xl bg-royal-blue hover:bg-blue-700 text-white font-semibold text-xs inline-flex items-center justify-center gap-2 transition">
-                            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            <span>Unduh Kartu Atlet (PDF)</span>
-                        </button>
+                    @endif
+                </div>
+
+                <div class="flex-1 w-full space-y-2.5 text-sm">
+                    <div class="flex items-start">
+                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Nama Lengkap</span>
+                        <span class="text-neutral-500 mr-2">:</span>
+                        <strong class="text-neutral-900 dark:text-white font-bold">{{ $student->nama_lengkap }}</strong>
                     </div>
 
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 text-xs">
-                        <div class="p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800">
-                            <span class="text-neutral-400 block">Sabuk:</span>
-                            <strong class="text-neutral-900 dark:text-white">{{ $student->tingkat_sabuk }}</strong>
-                        </div>
-                        <div class="p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800">
-                            <span class="text-neutral-400 block">Kategori:</span>
-                            <strong class="text-neutral-900 dark:text-white">{{ $student->kategori }}</strong>
-                        </div>
-                        <div class="p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800">
-                            <span class="text-neutral-400 block">Kelas:</span>
-                            <strong class="text-neutral-900 dark:text-white">{{ $student->kelas }}</strong>
-                        </div>
-                        <div class="p-2 rounded-lg bg-neutral-50 dark:bg-neutral-800">
-                            <span class="text-neutral-400 block">Ranting:</span>
-                            <strong class="text-neutral-900 dark:text-white">{{ $student->account->nama_ranting ?? '-' }}</strong>
-                        </div>
+                    <div class="flex items-start">
+                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Tanggal Lahir</span>
+                        <span class="text-neutral-500 mr-2">:</span>
+                        <span class="text-neutral-800 dark:text-neutral-200">{{ $student->tanggal_lahir ? $student->tanggal_lahir->translatedFormat('d F Y') : '-' }}</span>
+                    </div>
+
+                    <div class="flex items-start">
+                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Sabuk</span>
+                        <span class="text-neutral-500 mr-2">:</span>
+                        <strong class="text-neutral-900 dark:text-white font-bold">{{ $student->nama_sabuk }}</strong>
+                    </div>
+
+                    <div class="flex items-start">
+                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Ranting</span>
+                        <span class="text-neutral-500 mr-2">:</span>
+                        <span class="text-neutral-800 dark:text-neutral-200">{{ $student->account->nama_ranting ?? $student->account->ranting?->nm_ranting ?? '-' }}</span>
+                    </div>
+
+                    <div class="flex items-start">
+                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Email</span>
+                        <span class="text-neutral-500 mr-2">:</span>
+                        <span class="text-neutral-800 dark:text-neutral-200">{{ $student->account->email ?? '-' }}</span>
+                    </div>
+
+                    <div class="flex items-start">
+                        <span class="w-36 text-neutral-500 font-semibold shrink-0">ID Position</span>
+                        <span class="text-neutral-500 mr-2">:</span>
+                        <span class="font-mono font-bold text-royal-blue dark:text-blue-400">{{ $student->account->id_position ?? '-' }}</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Rincian Data -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                <div class="space-y-2 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/40">
-                    <p class="font-bold text-neutral-500 uppercase">Informasi Sekolah & Fisik</p>
-                    <p><span class="text-neutral-400">Instansi:</span> {{ $student->nama_sekolah }} ({{ $student->tingkat }})</p>
-                    <p><span class="text-neutral-400">Tgl Lahir:</span> {{ $student->tanggal_lahir ? $student->tanggal_lahir->format('d F Y') : '-' }}</p>
-                    <p><span class="text-neutral-400">Berat / Tinggi:</span> {{ $student->berat_badan }} kg / {{ $student->tinggi_badan }} cm</p>
-                    <p><span class="text-neutral-400">Gender:</span> {{ $student->gender === 'male' ? 'Laki-laki' : 'Perempuan' }}</p>
-                </div>
-                <div class="space-y-2 p-4 rounded-xl bg-neutral-50 dark:bg-neutral-800/40">
-                    <p class="font-bold text-neutral-500 uppercase">Informasi Orang Tua & Domisili</p>
-                    <p><span class="text-neutral-400">Nama Ortu/Wali:</span> {{ $student->nama_ortu }}</p>
-                    <p><span class="text-neutral-400">WhatsApp Ortu:</span> {{ $student->no_ortu }}</p>
-                    <p><span class="text-neutral-400">NIK / KIA:</span> {{ $student->nik_kia }}</p>
-                    <p><span class="text-neutral-400">Alamat:</span> {{ $student->account->alamat }}</p>
-                </div>
+            <!-- Footer & Tombol Download -->
+            <div class="pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                <button wire:click="downloadPdf" class="w-full min-h-[48px] rounded-2xl bg-royal-blue hover:bg-blue-700 text-white font-bold text-sm shadow-lg inline-flex items-center justify-center gap-2 transition">
+                    <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <span>DOWNLOAD KARTU ANGGOTA (PDF)</span>
+                </button>
             </div>
         </div>
     @else
         <div class="p-8 rounded-2xl bg-white dark:bg-neutral-900 border text-center text-neutral-400">
             <p>Akun ini tidak memiliki data atlet terkait.</p>
+        </div>
+    @endif
+
+    <!-- FIRST LOGIN MODAL (WAJIB GANTI PASSWORD & PROFIL) -->
+    @if ($showFirstLoginModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+            <div class="bg-white dark:bg-neutral-900 rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl border-2 border-royal-blue space-y-5 animate-in fade-in zoom-in-95 duration-200">
+                <div class="text-center space-y-2">
+                    <div class="size-14 rounded-full bg-blue-100 dark:bg-blue-950/60 text-royal-blue dark:text-blue-400 flex items-center justify-center mx-auto text-2xl">
+                        🔐
+                    </div>
+                    <h2 class="text-xl font-black text-neutral-900 dark:text-white">Pembaruan Kata Sandi Akun</h2>
+                    <p class="text-xs text-neutral-600 dark:text-neutral-400">
+                        Kata sandi Anda telah di-reset oleh sistem/administrator. Silakan masukkan kata sandi baru untuk mengamankan akun Anda.
+                    </p>
+                </div>
+
+                <form wire:submit.prevent="submitFirstLogin" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Kata Sandi Baru <span class="text-crimson-red">*</span></label>
+                        <input type="password" wire:model.defer="firstLoginPassword" placeholder="Minimal 6 karakter" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue" />
+                        @error('firstLoginPassword') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Ulangi Kata Sandi Baru <span class="text-crimson-red">*</span></label>
+                        <input type="password" wire:model.defer="firstLoginPassword_confirmation" placeholder="Konfirmasi kata sandi baru" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Email Aktif <span class="text-crimson-red">*</span></label>
+                        <input type="email" wire:model.defer="firstLoginEmail" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue" />
+                        @error('firstLoginEmail') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Alamat Domisili <span class="text-crimson-red">*</span></label>
+                        <textarea wire:model.defer="firstLoginAlamat" rows="2" class="w-full p-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue"></textarea>
+                        @error('firstLoginAlamat') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full min-h-[48px] rounded-xl bg-royal-blue hover:bg-blue-700 text-white font-bold text-sm shadow-lg transition">
+                            Simpan Kata Sandi & Lanjutkan
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     @endif
 </div>

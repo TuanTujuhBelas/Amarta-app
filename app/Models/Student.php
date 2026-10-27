@@ -32,6 +32,7 @@ use Illuminate\Support\Carbon;
  * @property string $status_verifikasi
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property-read string $nama_sabuk
  * @property-read Account|null $account
  * @property-read Collection<int, RevisionRequest> $revisionRequests
  */
@@ -67,6 +68,14 @@ class Student extends Model
         'berat_badan' => 'decimal:2',
         'tinggi_badan' => 'decimal:2',
     ];
+
+    /**
+     * Get belt name without code (e.g. 'Merah' instead of 'Merah 003').
+     */
+    public function getNamaSabukAttribute(): string
+    {
+        return trim((string) preg_replace('/\s*\d+$/', '', (string) $this->tingkat_sabuk));
+    }
 
     /**
      * @return BelongsTo<Account, $this>

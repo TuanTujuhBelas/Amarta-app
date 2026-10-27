@@ -3,12 +3,14 @@
 namespace App\Livewire;
 
 use App\Models\Account;
+use App\Models\Ranting;
 use App\Models\Student;
 use App\Services\ActivityLogger;
 use App\Services\PositionIdService;
 use App\Services\R2StorageService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -33,7 +35,7 @@ class AthleteRegistration extends Component
 
     public string $alamat = '';
 
-    public string $nama_ranting = '';
+    public ?int $id_ranting = null;
 
     // Step 2: Tingkat & Kategori Atlet
     public string $tingkat_sabuk = 'Putih 001';
@@ -133,7 +135,7 @@ class AthleteRegistration extends Component
                 'email' => 'required|email|max:255|unique:m_account,email',
                 'password' => 'required|string|min:6|confirmed',
                 'alamat' => 'required|string|max:1000',
-                'nama_ranting' => 'required|string|max:255',
+                'id_ranting' => 'required|integer|exists:m_ranting,id_ranting',
             ]);
         } elseif ($this->currentStep === 2) {
             $this->validate([
@@ -172,7 +174,7 @@ class AthleteRegistration extends Component
         ]);
 
         DB::transaction(function () use ($positionIdService) {
-            // 1. Generate ID Position unik (Contoh: PLT.2026-2610-001005)
+            // 1. Generate ID Position unik (Contoh: SSW.2026-2610-001005)
             $idPosition = $positionIdService->generate($this->tingkat_sabuk);
 
             // 2. Upload & kompres dokumen ke R2/Storage
@@ -181,17 +183,23 @@ class AthleteRegistration extends Component
             $aktePath = R2StorageService::uploadCompressed($this->photo_akte_kia, 'athletes/akte');
             $sehatPath = R2StorageService::uploadCompressed($this->photo_surat_sehat, 'athletes/surat_sehat');
 
+            $ranting = Ranting::find($this->id_ranting);
+            $namaRanting = $ranting ? $ranting->nm_ranting : '';
+
             // 3. Simpan Akun (m_account) dengan MD5 password sesuai PRD
             $account = Account::create([
+                'id_ranting' => $this->id_ranting,
                 'nama' => $this->nama,
                 'username' => $this->username,
                 'password' => md5($this->password),
+                'level' => 'SSW',
                 'status' => 'active',
                 'id_position' => $idPosition,
+                'is_first_login' => false,
                 'photo' => $photoPath,
                 'alamat' => $this->alamat,
                 'email' => $this->email,
-                'nama_ranting' => $this->nama_ranting,
+                'nama_ranting' => $namaRanting,
             ]);
 
             // 4. Simpan Data Atlet (m_siswa)
@@ -224,7 +232,7 @@ class AthleteRegistration extends Component
                 'REGISTER',
                 "Pendaftaran atlet baru {$this->nama_lengkap} (ID: {$idPosition})",
                 $student->id,
-                ['id_position' => $idPosition, 'ranting' => $this->nama_ranting]
+                ['id_position' => $idPosition, 'ranting' => $namaRanting]
             );
 
             $this->registeredIdPosition = $idPosition;
@@ -235,7 +243,12 @@ class AthleteRegistration extends Component
 
     public function render(): View
     {
-        return view('livewire.athlete-registration')
-            ->layout('layouts.auth.simple', ['title' => 'Registrasi Atlet - Garuda Amarta']);
+        $rantings = Schema::hasTable('m_ranting')
+            ? Ranting::orderBy('nm_ranting')->get()
+            : collect();
+
+        return view('livewire.athlete-registration', [
+            'rantings' => $rantings,
+        ])->layout('layouts.auth.simple', ['title' => 'Registrasi Atlet - Garuda Amarta']);
     }
 }

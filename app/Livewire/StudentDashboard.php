@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Account;
 use App\Models\RevisionRequest;
 use App\Models\Student;
 use App\Services\ActivityLogger;
@@ -37,9 +38,55 @@ class StudentDashboard extends Component
 
     public string $successMessage = '';
 
+    // First Login Modal State & Form
+    public bool $showFirstLoginModal = false;
+
+    public string $firstLoginPassword = '';
+
+    public string $firstLoginPassword_confirmation = '';
+
+    public string $firstLoginAlamat = '';
+
+    public string $firstLoginEmail = '';
+
     public function mount(): void
     {
+        $user = Auth::user();
+        if ($user instanceof Account && $user->is_first_login) {
+            $this->showFirstLoginModal = true;
+            $this->firstLoginAlamat = $user->alamat ?? '';
+            $this->firstLoginEmail = $user->email ?? '';
+        }
+
         $this->loadStudentData();
+    }
+
+    public function submitFirstLogin(): void
+    {
+        $this->validate([
+            'firstLoginPassword' => 'required|string|min:6|confirmed',
+            'firstLoginAlamat' => 'required|string|max:1000',
+            'firstLoginEmail' => 'required|email|max:255',
+        ]);
+
+        $user = Auth::user();
+        if ($user instanceof Account) {
+            $user->update([
+                'password' => md5($this->firstLoginPassword),
+                'alamat' => $this->firstLoginAlamat,
+                'email' => $this->firstLoginEmail,
+                'is_first_login' => false,
+            ]);
+
+            ActivityLogger::log(
+                $user->id,
+                'FIRST_LOGIN_UPDATE',
+                "Siswa {$user->nama} ({$user->username}) berhasil mengubah password default dan memperbarui profil saat login pertama kali."
+            );
+
+            $this->showFirstLoginModal = false;
+            $this->successMessage = 'Kata sandi dan profil Anda berhasil diperbarui!';
+        }
     }
 
     public function loadStudentData(): void

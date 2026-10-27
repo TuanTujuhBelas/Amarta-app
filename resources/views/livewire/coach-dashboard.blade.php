@@ -337,6 +337,10 @@
                     <button wire:click="closeDetail" class="px-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-semibold">Tutup</button>
                     
                     <div class="flex items-center gap-2">
+                        <button wire:click="exportPdf({{ $selectedStudent->id }})" class="px-4 py-2 rounded-xl bg-blue-50 text-royal-blue border border-blue-300 hover:bg-royal-blue hover:text-white text-sm font-semibold transition inline-flex items-center gap-1.5">
+                            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            <span>Kartu Anggota (PDF)</span>
+                        </button>
                         <button wire:click="openRevision({{ $selectedStudent->id }})" class="px-4 py-2 rounded-xl bg-rose-50 text-crimson-red border border-rose-300 hover:bg-crimson-red hover:text-white text-sm font-semibold transition">
                             Minta Revisi Berkas
                         </button>
@@ -396,6 +400,54 @@
                     <div class="pt-3 border-t border-neutral-200 dark:border-neutral-800 flex justify-end gap-2">
                         <button type="button" wire:click="closeRevision" class="px-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 text-sm font-semibold">Batal</button>
                         <button type="submit" class="px-5 py-2 rounded-xl bg-crimson-red hover:bg-red-700 text-white text-sm font-bold transition">Kirim Revisi ke Atlet</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endif
+
+    <!-- FIRST LOGIN MODAL (WAJIB GANTI PASSWORD & PROFIL) -->
+    @if ($showFirstLoginModal)
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+            <div class="bg-white dark:bg-neutral-900 rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl border-2 border-royal-blue space-y-5 animate-in fade-in zoom-in-95 duration-200">
+                <div class="text-center space-y-2">
+                    <div class="size-14 rounded-full bg-blue-100 dark:bg-blue-950/60 text-royal-blue dark:text-blue-400 flex items-center justify-center mx-auto text-2xl">
+                        🔐
+                    </div>
+                    <h2 class="text-xl font-black text-neutral-900 dark:text-white">Pembaruan Keamanan Pertama Kali</h2>
+                    <p class="text-xs text-neutral-600 dark:text-neutral-400">
+                        Demi keamanan akun Anda, Anda wajib mengganti kata sandi bawaan dan memperbarui data profil sebelum dapat mengakses Dashboard Garuda Amarta.
+                    </p>
+                </div>
+
+                <form wire:submit.prevent="submitFirstLogin" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Kata Sandi Baru <span class="text-crimson-red">*</span></label>
+                        <input type="password" wire:model.defer="firstLoginPassword" placeholder="Minimal 6 karakter" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue" />
+                        @error('firstLoginPassword') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Ulangi Kata Sandi Baru <span class="text-crimson-red">*</span></label>
+                        <input type="password" wire:model.defer="firstLoginPassword_confirmation" placeholder="Konfirmasi kata sandi baru" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Email Aktif <span class="text-crimson-red">*</span></label>
+                        <input type="email" wire:model.defer="firstLoginEmail" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue" />
+                        @error('firstLoginEmail') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-neutral-700 dark:text-neutral-300 mb-1">Alamat Domisili <span class="text-crimson-red">*</span></label>
+                        <textarea wire:model.defer="firstLoginAlamat" rows="2" class="w-full p-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm outline-none focus:ring-2 focus:ring-royal-blue"></textarea>
+                        @error('firstLoginAlamat') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
+                    </div>
+
+                    <div class="pt-2">
+                        <button type="submit" class="w-full min-h-[48px] rounded-xl bg-royal-blue hover:bg-blue-700 text-white font-bold text-sm shadow-lg transition">
+                            Simpan & Buka Akses Dashboard
+                        </button>
                     </div>
                 </form>
             </div>

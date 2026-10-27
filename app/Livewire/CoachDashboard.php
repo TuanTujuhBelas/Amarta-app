@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Account;
+use App\Models\Ranting;
 use App\Models\RevisionRequest;
 use App\Models\Student;
 use App\Services\ActivityLogger;
@@ -37,6 +38,17 @@ class CoachDashboard extends Component
 
     public ?Student $selectedStudent = null;
 
+    // First Login Modal State & Form
+    public bool $showFirstLoginModal = false;
+
+    public string $firstLoginPassword = '';
+
+    public string $firstLoginPassword_confirmation = '';
+
+    public string $firstLoginAlamat = '';
+
+    public string $firstLoginEmail = '';
+
     // Revision Form
     /** @var array<int, string> */
     public array $requestedItems = [];
@@ -55,6 +67,45 @@ class CoachDashboard extends Component
         'filterStatus' => ['except' => ''],
         'filterKategori' => ['except' => ''],
     ];
+
+    public function mount(): void
+    {
+        $user = Auth::user();
+        if ($user instanceof Account && $user->is_first_login) {
+            $this->showFirstLoginModal = true;
+            $this->firstLoginAlamat = $user->alamat ?? '';
+            $this->firstLoginEmail = $user->email ?? '';
+        }
+    }
+
+    public function submitFirstLogin(): void
+    {
+        $this->validate([
+            'firstLoginPassword' => 'required|string|min:6|confirmed',
+            'firstLoginAlamat' => 'required|string|max:1000',
+            'firstLoginEmail' => 'required|email|max:255',
+        ]);
+
+        $user = Auth::user();
+        if ($user instanceof Account) {
+            $user->update([
+                'password' => md5($this->firstLoginPassword),
+                'alamat' => $this->firstLoginAlamat,
+                'email' => $this->firstLoginEmail,
+                'is_first_login' => false,
+            ]);
+
+            ActivityLogger::log(
+                $user->id,
+                'FIRST_LOGIN_UPDATE',
+                "Pengguna {$user->nama} ({$user->username}) berhasil mengubah password default dan memperbarui profil saat login pertama kali."
+            );
+
+            $this->showFirstLoginModal = false;
+            $this->alertMessage = 'Kata sandi dan profil Anda berhasil diperbarui. Selamat datang di Garuda Amarta!';
+            $this->alertType = 'success';
+        }
+    }
 
     public function updatingSearch(): void
     {
@@ -289,11 +340,14 @@ class CoachDashboard extends Component
             'need_revision' => Student::where('status_verifikasi', 'need_revision')->count(),
         ];
 
-        // Daftar Ranting Unik untuk Dropdown Filter
-        $rantingOptions = Account::whereNotNull('nama_ranting')
-            ->where('nama_ranting', '!=', '')
-            ->distinct()
-            ->pluck('nama_ranting');
+        // Daftar Ranting dari Master m_ranting
+        $rantingOptions = Ranting::orderBy('nm_ranting')->pluck('nm_ranting');
+        if ($rantingOptions->isEmpty()) {
+            $rantingOptions = Account::whereNotNull('nama_ranting')
+                ->where('nama_ranting', '!=', '')
+                ->distinct()
+                ->pluck('nama_ranting');
+        }
 
         return view('livewire.coach-dashboard', [
             'students' => $students,

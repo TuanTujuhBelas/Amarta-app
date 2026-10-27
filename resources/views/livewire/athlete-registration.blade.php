@@ -10,16 +10,6 @@
         <p class="text-sm text-blue-100 mt-1 font-medium">Sistem Registrasi & Manajemen Atlet Pencak Silat</p>
 
         @if (!$isSuccess)
-            <!-- Role Switcher Tab -->
-            <div class="mt-5 grid grid-cols-2 p-1 bg-blue-900/40 rounded-xl gap-1 text-xs font-bold">
-                <span class="py-2.5 rounded-lg bg-vibrant-yellow text-neutral-900 shadow font-black text-center">
-                    🥋 Daftar Sebagai Atlet
-                </span>
-                <a href="{{ route('register.coach') }}" class="py-2.5 rounded-lg text-blue-200 hover:text-white transition text-center">
-                    🧑‍🏫 Daftar Sebagai Pelatih
-                </a>
-            </div>
-
             <!-- Progress Bar -->
             <div class="mt-5">
                 <div class="flex justify-between items-center text-xs font-semibold mb-2 text-blue-200">
@@ -111,9 +101,14 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Nama Ranting Latihan <span class="text-crimson-red">*</span></label>
-                            <input type="text" wire:model.defer="nama_ranting" placeholder="Contoh: Pangkalan Jati, Mayora, Ranting Pusat" class="w-full min-h-[48px] px-4 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-royal-blue outline-none" />
-                            @error('nama_ranting') <p class="text-xs text-crimson-red mt-1 font-medium">{{ $message }}</p> @enderror
+                            <label class="block text-sm font-semibold text-neutral-700 dark:text-neutral-300 mb-1">Ranting Latihan <span class="text-crimson-red">*</span></label>
+                            <select wire:model.defer="id_ranting" class="w-full min-h-[48px] px-4 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-white focus:ring-2 focus:ring-royal-blue outline-none">
+                                <option value="">-- Pilih Ranting Latihan --</option>
+                                @foreach($rantings as $ranting)
+                                    <option value="{{ $ranting->id_ranting }}">{{ $ranting->nm_ranting }}</option>
+                                @endforeach
+                            </select>
+                            @error('id_ranting') <p class="text-xs text-crimson-red mt-1 font-medium">{{ $message }}</p> @enderror
                         </div>
 
                         <div>

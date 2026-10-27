@@ -11,24 +11,40 @@
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
-                <flux:sidebar.group :heading="__('Platform')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
-                    </flux:sidebar.item>
+                <flux:sidebar.group :heading="__('Menu')" class="grid">
+                    @if(auth()->user() instanceof \App\Models\Account && auth()->user()->isStudent())
+                        <flux:sidebar.item icon="identification" :href="route('student.dashboard')" :current="request()->routeIs('student.dashboard')" wire:navigate>
+                            {{ __('Portal & KTA Atlet') }}
+                        </flux:sidebar.item>
+                    @else
+                        <flux:sidebar.item icon="home" :href="route('coach.dashboard')" :current="request()->routeIs('coach.dashboard') || request()->routeIs('dashboard')" wire:navigate>
+                            {{ __('Verifikasi Atlet') }}
+                        </flux:sidebar.item>
+                    @endif
                 </flux:sidebar.group>
+
+                @if(auth()->user() instanceof \App\Models\Account && auth()->user()->isSuperAdmin())
+                    <flux:sidebar.group :heading="__('Super Admin')" class="grid">
+                        <flux:sidebar.item icon="building-office-2" :href="route('superadmin.ranting')" :current="request()->routeIs('superadmin.ranting') || (request()->routeIs('superadmin.dashboard') && !request()->routeIs('superadmin.transfer') && !request()->routeIs('superadmin.reset_password') && !request()->routeIs('superadmin.logs'))" wire:navigate>
+                            {{ __('Master Ranting') }}
+                        </flux:sidebar.item>
+
+                        <flux:sidebar.item icon="arrows-right-left" :href="route('superadmin.transfer')" :current="request()->routeIs('superadmin.transfer')" wire:navigate>
+                            {{ __('Mutasi Anggota') }}
+                        </flux:sidebar.item>
+
+                        <flux:sidebar.item icon="key" :href="route('superadmin.reset_password')" :current="request()->routeIs('superadmin.reset_password')" wire:navigate>
+                            {{ __('Reset Password') }}
+                        </flux:sidebar.item>
+
+                        <flux:sidebar.item icon="clipboard-document-list" :href="route('superadmin.logs')" :current="request()->routeIs('superadmin.logs')" wire:navigate>
+                            {{ __('Audit Trail Log') }}
+                        </flux:sidebar.item>
+                    </flux:sidebar.group>
+                @endif
             </flux:sidebar.nav>
 
             <flux:spacer />
-
-            <flux:sidebar.nav>
-                <flux:sidebar.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                    {{ __('Repository') }}
-                </flux:sidebar.item>
-
-                <flux:sidebar.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                    {{ __('Documentation') }}
-                </flux:sidebar.item>
-            </flux:sidebar.nav>
 
             <x-desktop-user-menu class="hidden lg:block" :name="auth()->user()->name" />
         </flux:sidebar>

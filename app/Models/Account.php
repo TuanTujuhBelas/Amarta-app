@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -12,11 +13,14 @@ use Illuminate\Support\Str;
 
 /**
  * @property int $id
+ * @property int|null $id_ranting
  * @property string|null $nama
  * @property string $username
  * @property string $password
+ * @property string $level
  * @property string $status
  * @property string|null $id_position
+ * @property bool $is_first_login
  * @property string|null $photo
  * @property string|null $alamat
  * @property string|null $email
@@ -24,6 +28,7 @@ use Illuminate\Support\Str;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property-read string $name
+ * @property-read Ranting|null $ranting
  * @property-read Student|null $student
  * @property-read Collection<int, RevisionRequest> $revisionRequests
  * @property-read Collection<int, ActivityLog> $activityLogs
@@ -37,11 +42,14 @@ class Account extends Authenticatable
     protected $primaryKey = 'id';
 
     protected $fillable = [
+        'id_ranting',
         'nama',
         'username',
         'password',
+        'level',
         'status',
         'id_position',
+        'is_first_login',
         'photo',
         'alamat',
         'email',
@@ -51,6 +59,21 @@ class Account extends Authenticatable
     protected $hidden = [
         'password',
     ];
+
+    /**
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'is_first_login' => 'boolean',
+    ];
+
+    /**
+     * @return BelongsTo<Ranting, $this>
+     */
+    public function ranting(): BelongsTo
+    {
+        return $this->belongsTo(Ranting::class, 'id_ranting', 'id_ranting');
+    }
 
     /**
      * @return HasOne<Student, $this>
@@ -77,19 +100,27 @@ class Account extends Authenticatable
     }
 
     /**
-     * Check if account belongs to a student (exists in m_siswa).
+     * Check if account is a Super Admin.
      */
-    public function isStudent(): bool
+    public function isSuperAdmin(): bool
     {
-        return $this->student()->exists();
+        return $this->level === 'su';
     }
 
     /**
-     * Check if account is a coach (does not exist in m_siswa).
+     * Check if account belongs to a student (level SSW or has student record).
+     */
+    public function isStudent(): bool
+    {
+        return $this->level === 'SSW' || $this->student()->exists();
+    }
+
+    /**
+     * Check if account is a coach or super admin.
      */
     public function isCoach(): bool
     {
-        return ! $this->isStudent();
+        return $this->level === 'PLT' || $this->level === 'su' || (! $this->isStudent() && $this->level !== 'SSW');
     }
 
     /**
