@@ -143,12 +143,17 @@
     <div class="header">
         <table>
             <tr>
-                <td style="width: 70%;">
+                <td style="width: 15%; vertical-align: middle;">
+                    @if (file_exists(public_path('gama.png')))
+                        <img src="{{ public_path('gama.png') }}" style="height: 55px; width: auto;" alt="Logo">
+                    @endif
+                </td>
+                <td style="width: 55%; vertical-align: middle;">
                     <h1 class="logo-title">GARUDA AMARTA</h1>
                     <p class="logo-subtitle">Perguruan Pencak Silat — Dewan Pengurus Pusat & Kepelatihan</p>
                     <p class="logo-subtitle">Sistem Informasi & Manajemen Keanggotaan Atlet Resmi</p>
                 </td>
-                <td style="width: 30%; text-align: right;">
+                <td style="width: 30%; text-align: right; vertical-align: middle;">
                     <div class="id-badge">
                         <span>ID Position Atlet:</span>
                         <strong>{{ $student->account->id_position ?? '-' }}</strong>

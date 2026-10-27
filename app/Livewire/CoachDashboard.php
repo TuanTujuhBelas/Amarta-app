@@ -6,8 +6,10 @@ use App\Models\Account;
 use App\Models\RevisionRequest;
 use App\Models\Student;
 use App\Services\ActivityLogger;
+use App\Services\AthleteZipExportService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -209,9 +211,38 @@ class CoachDashboard extends Component
         return response()->streamDownload(fn () => print ($pdf->output()), $filename);
     }
 
-    public function render(): View
+    /**
+     * Ekspor seluruh berkas atlet (PDF & Dokumen R2) ke dalam file ZIP terstruktur.
+     */
+    public function exportZip(): ?Response
     {
-        // Query Siswa dengan Filter
+        $students = $this->getFilteredStudentsQuery()->latest()->get();
+
+        if ($students->isEmpty()) {
+            $this->alertMessage = 'Tidak ada data atlet yang sesuai dengan filter untuk diekspor.';
+            $this->alertType = 'warning';
+
+            return null;
+        }
+
+        $archive = AthleteZipExportService::createArchive($students);
+
+        ActivityLogger::log(
+            Auth::id(),
+            'EXPORT_DATA',
+            "Pelatih mengekspor paket ZIP berisi {$students->count()} data atlet",
+            null,
+            ['total_athletes' => $students->count(), 'archive' => $archive['filename']]
+        );
+
+        return response()->download($archive['path'], $archive['filename'])->deleteFileAfterSend(true);
+    }
+
+    /**
+     * @return Builder<Student>
+     */
+    protected function getFilteredStudentsQuery()
+    {
         $query = Student::with('account');
 
         if (! empty($this->search)) {
@@ -243,7 +274,12 @@ class CoachDashboard extends Component
             $query->where('kelas', $this->filterKelas);
         }
 
-        $students = $query->latest()->paginate(10);
+        return $query;
+    }
+
+    public function render(): View
+    {
+        $students = $this->getFilteredStudentsQuery()->latest()->paginate(10);
 
         // Ringkasan Statistik
         $metrics = [

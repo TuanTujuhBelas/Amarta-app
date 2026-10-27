@@ -65,9 +65,9 @@
 
     <!-- Filter Bar & Search -->
     <div class="bg-white dark:bg-neutral-900 p-4 md:p-6 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm space-y-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
             <!-- Search -->
-            <div class="md:col-span-2">
+            <div class="md:col-span-5">
                 <label class="block text-xs font-semibold text-neutral-500 mb-1">Cari Atlet</label>
                 <div class="relative">
                     <input type="text" wire:model.live.debounce.300ms="search" placeholder="Ketik nama atlet, ID position, atau sekolah..." class="w-full min-h-[44px] pl-10 pr-4 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm text-neutral-900 dark:text-white outline-none focus:ring-2 focus:ring-royal-blue" />
@@ -76,18 +76,18 @@
             </div>
 
             <!-- Filter Status -->
-            <div>
-                <label class="block text-xs font-semibold text-neutral-500 mb-1">Status Verifikasi</label>
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-500 mb-1">Status</label>
                 <select wire:model.live="filterStatus" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm text-neutral-900 dark:text-white outline-none focus:ring-2 focus:ring-royal-blue">
                     <option value="">Semua Status</option>
-                    <option value="pending">🟡 Menunggu Verifikasi</option>
-                    <option value="approved">🟢 Terverifikasi (Approved)</option>
+                    <option value="pending">🟡 Pending</option>
+                    <option value="approved">🟢 Terverifikasi</option>
                     <option value="need_revision">🔴 Perlu Revisi</option>
                 </select>
             </div>
 
             <!-- Filter Ranting -->
-            <div>
+            <div class="md:col-span-2">
                 <label class="block text-xs font-semibold text-neutral-500 mb-1">Ranting Latihan</label>
                 <select wire:model.live="filterRanting" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm text-neutral-900 dark:text-white outline-none focus:ring-2 focus:ring-royal-blue">
                     <option value="">Semua Ranting</option>
@@ -95,6 +95,20 @@
                         <option value="{{ $ranting }}">{{ $ranting }}</option>
                     @endforeach
                 </select>
+            </div>
+
+            <!-- Ekspor Bulk ZIP Button -->
+            <div class="md:col-span-3">
+                <button wire:click="exportZip" wire:loading.attr="disabled" class="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-vibrant-yellow hover:bg-yellow-400 text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition disabled:opacity-50 cursor-pointer">
+                    <span wire:loading.remove wire:target="exportZip" class="flex items-center gap-2">
+                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Ekspor Paket ZIP
+                    </span>
+                    <span wire:loading wire:target="exportZip" class="flex items-center gap-2">
+                        <svg class="size-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                        Menyusun ZIP...
+                    </span>
+                </button>
             </div>
         </div>
     </div>
