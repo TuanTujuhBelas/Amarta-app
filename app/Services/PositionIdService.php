@@ -53,4 +53,34 @@ class PositionIdService
             return "{$prefix}{$sequencePadded}";
         });
     }
+
+    /**
+     * Generate automatic atomic ID Position for coaches/pelatih.
+     * Format: PLT.PELATIH-[Tahun]-[Urut] (Contoh: PLT.PELATIH-2026-001)
+     */
+    public function generateCoachId(?Carbon $date = null): string
+    {
+        $date = $date ?? Carbon::now();
+        $year = $date->format('Y');
+        $prefix = "PLT.PELATIH-{$year}-";
+
+        return DB::transaction(function () use ($prefix) {
+            $latestAccount = Account::where('id_position', 'LIKE', "{$prefix}%")
+                ->orderBy('id_position', 'desc')
+                ->lockForUpdate()
+                ->first();
+
+            $sequence = 1;
+            if ($latestAccount && !empty($latestAccount->id_position)) {
+                $lastThreeDigits = substr($latestAccount->id_position, -3);
+                if (is_numeric($lastThreeDigits)) {
+                    $sequence = ((int) $lastThreeDigits) + 1;
+                }
+            }
+
+            $sequencePadded = str_pad((string) $sequence, 3, '0', STR_PAD_LEFT);
+
+            return "{$prefix}{$sequencePadded}";
+        });
+    }
 }

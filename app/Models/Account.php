@@ -41,4 +41,41 @@ class Account extends Authenticatable
     {
         return $this->hasMany(ActivityLog::class, 'id_account');
     }
+
+    /**
+     * Check if account belongs to a student (exists in m_siswa).
+     */
+    public function isStudent(): bool
+    {
+        return $this->student()->exists();
+    }
+
+    /**
+     * Check if account is a coach (does not exist in m_siswa).
+     */
+    public function isCoach(): bool
+    {
+        return !$this->isStudent();
+    }
+
+    /**
+     * Accessor for 'name' attribute used by Flux UI components.
+     */
+    public function getNameAttribute(): string
+    {
+        return $this->nama ?? $this->username ?? '';
+    }
+
+    /**
+     * Get the user's initials for avatar display in Flux UI.
+     */
+    public function initials(): string
+    {
+        $name = $this->nama ?? $this->username ?? 'GA';
+        $initials = \Illuminate\Support\Str::initials($name, true);
+
+        return \Illuminate\Support\Str::length($initials) > 1
+            ? \Illuminate\Support\Str::substr($initials, 0, 1).\Illuminate\Support\Str::substr($initials, -1)
+            : $initials;
+    }
 }
