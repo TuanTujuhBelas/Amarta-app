@@ -15,28 +15,37 @@ class CoachRegistration extends Component
     use WithFileUploads;
 
     public string $nama = '';
+
     public string $username = '';
+
     public string $email = '';
+
     public string $password = '';
+
     public string $password_confirmation = '';
+
     public string $nama_ranting = '';
+
     public string $alamat = '';
+
     public $photo;
 
     public bool $isSuccess = false;
+
     public string $registeredIdPosition = '';
+
     public string $registeredName = '';
 
     protected function rules(): array
     {
         return [
-            'nama'         => 'required|string|max:255',
-            'username'     => 'required|string|min:4|max:100|alpha_dash|unique:m_account,username',
-            'email'        => 'required|email|max:255|unique:m_account,email',
-            'password'     => 'required|string|min:6|confirmed',
+            'nama' => 'required|string|max:255',
+            'username' => 'required|string|min:4|max:100|alpha_dash|unique:m_account,username',
+            'email' => 'required|email|max:255|unique:m_account,email',
+            'password' => 'required|string|min:6|confirmed',
             'nama_ranting' => 'required|string|max:255',
-            'alamat'       => 'required|string|max:1000',
-            'photo'        => 'nullable|image|max:5120',
+            'alamat' => 'required|string|max:1000',
+            'photo' => 'nullable|image|max:5120',
         ];
     }
 
@@ -54,14 +63,14 @@ class CoachRegistration extends Component
 
             // Simpan HANYA ke m_account (Pelatih TIDAK masuk ke m_siswa)
             $account = Account::create([
-                'nama'         => $this->nama,
-                'username'     => $this->username,
-                'password'     => md5($this->password),
-                'status'       => 'active',
-                'id_position'  => $idPosition,
-                'photo'        => $photoPath,
-                'alamat'       => $this->alamat,
-                'email'        => $this->email,
+                'nama' => $this->nama,
+                'username' => $this->username,
+                'password' => md5($this->password),
+                'status' => 'active',
+                'id_position' => $idPosition,
+                'photo' => $photoPath,
+                'alamat' => $this->alamat,
+                'email' => $this->email,
                 'nama_ranting' => $this->nama_ranting,
             ]);
 
@@ -74,8 +83,8 @@ class CoachRegistration extends Component
             );
 
             $this->registeredIdPosition = $idPosition;
-            $this->registeredName       = $this->nama;
-            $this->isSuccess            = true;
+            $this->registeredName = $this->nama;
+            $this->isSuccess = true;
         });
     }
 

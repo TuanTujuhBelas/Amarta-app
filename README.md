@@ -38,9 +38,9 @@ Aplikasi mengadopsi tema visual resmi **GARUDA AMARTA**:
 * **Step 3: Data Fisik & Orang Tua:** Input nama lengkap sesuai akte, tanggal lahir, berat badan (kg), tinggi badan (cm), kontak WhatsApp orang tua, NIK/KIA 16 digit, dan No. KK 16 digit.
 * **Step 4: Unggah Berkas & Dokumen:** Upload Foto Profil, Kartu Keluarga, Akte/KIA, dan Surat Keterangan Sehat dilengkapi pratinjau langsung (*instant image preview*).
 * **Generator ID Position Otomatis:**
-  Sistem secara *atomic* membuat ID registrasi resmi dengan format:
-  $$\text{PLT.[Tahun]-[TglBln]-[KodeSabuk][Urut]}$$
-  *(Contoh: `PLT.2026-2610-001005`)*
+  Sistem secara *atomic* membuat ID registrasi resmi dengan pembedaan prefix:
+  * **Siswa / Atlet:** `SSW.[Tahun]-[TglBln]-[KodeSabuk][Urut]` *(Contoh: `SSW.2026-2710-005001`)*
+  * **Pelatih:** `PLT.PELATIH-[Tahun]-[Urut]` *(Contoh: `PLT.PELATIH-2026-001`)*
 
 ### 2. Panel Manajemen Pelatih (*Coach Dashboard*)
 * **Tabel Terpadu:** Memonitor status verifikasi atlet (`pending`, `approved`, `need_revision`).

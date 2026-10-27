@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Account;
 use App\Models\User;
 
 return [
@@ -64,7 +65,7 @@ return [
     'providers' => [
         'accounts' => [
             'driver' => 'eloquent-md5',
-            'model' => \App\Models\Account::class,
+            'model' => Account::class,
         ],
 
         'users' => [

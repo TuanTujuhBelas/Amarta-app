@@ -17,13 +17,13 @@ class ActivityLogger
         ?array $properties = null
     ): ActivityLog {
         return ActivityLog::create([
-            'id_account'  => $accountId,
-            'id_siswa'    => $studentId,
-            'action'      => $action,
+            'id_account' => $accountId,
+            'id_siswa' => $studentId,
+            'action' => $action,
             'description' => $description,
-            'properties'  => $properties,
-            'ip_address'  => request()->ip(),
-            'created_at'  => now(),
+            'properties' => $properties,
+            'ip_address' => request()->ip(),
+            'created_at' => now(),
         ]);
     }
 }

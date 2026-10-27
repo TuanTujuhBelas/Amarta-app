@@ -2,17 +2,19 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 class Account extends Authenticatable
 {
     use Notifiable;
 
     protected $table = 'm_account';
+
     protected $primaryKey = 'id';
+
     protected $fillable = [
         'nama',
         'username',
@@ -24,6 +26,7 @@ class Account extends Authenticatable
         'email',
         'nama_ranting',
     ];
+
     protected $hidden = [
         'password',
     ];
@@ -32,6 +35,7 @@ class Account extends Authenticatable
     {
         return $this->hasOne(Student::class, 'id_account');
     }
+
     public function revisionRequests()
     {
         return $this->hasMany(RevisionRequest::class, 'id_pelatih');
@@ -55,7 +59,7 @@ class Account extends Authenticatable
      */
     public function isCoach(): bool
     {
-        return !$this->isStudent();
+        return ! $this->isStudent();
     }
 
     /**
@@ -72,10 +76,10 @@ class Account extends Authenticatable
     public function initials(): string
     {
         $name = $this->nama ?? $this->username ?? 'GA';
-        $initials = \Illuminate\Support\Str::initials($name, true);
+        $initials = Str::initials($name, true);
 
-        return \Illuminate\Support\Str::length($initials) > 1
-            ? \Illuminate\Support\Str::substr($initials, 0, 1).\Illuminate\Support\Str::substr($initials, -1)
+        return Str::length($initials) > 1
+            ? Str::substr($initials, 0, 1).Str::substr($initials, -1)
             : $initials;
     }
 }

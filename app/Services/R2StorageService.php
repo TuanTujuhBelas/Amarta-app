@@ -14,7 +14,8 @@ class R2StorageService
     public static function disk(): string
     {
         $r2Key = config('filesystems.disks.r2.key');
-        return !empty($r2Key) ? 'r2' : 'public';
+
+        return ! empty($r2Key) ? 'r2' : 'public';
     }
 
     /**
@@ -23,7 +24,7 @@ class R2StorageService
     public static function uploadCompressed(UploadedFile $file, string $folder = 'documents'): string
     {
         $disk = self::disk();
-        $filename = Str::random(32) . '.' . $file->getClientOriginalExtension();
+        $filename = Str::random(32).'.'.$file->getClientOriginalExtension();
         $targetPath = "{$folder}/{$filename}";
 
         $mimeType = $file->getMimeType();
@@ -57,7 +58,8 @@ class R2StorageService
     }
 
     /**
-     * Get publicly accessible URL for a stored file.
+     * Get accessible URL for a stored file.
+     * Uses secure application stream route to guarantee delivery and protect sensitive documents.
      */
     public static function url(?string $path): ?string
     {
@@ -65,13 +67,7 @@ class R2StorageService
             return null;
         }
 
-        $disk = self::disk();
-        if ($disk === 'r2') {
-            $baseUrl = rtrim(config('filesystems.disks.r2.url', ''), '/');
-            return $baseUrl ? "{$baseUrl}/{$path}" : Storage::disk('r2')->url($path);
-        }
-
-        return Storage::disk('public')->url($path);
+        return url('/document/'.ltrim($path, '/'));
     }
 
     /**
@@ -81,12 +77,12 @@ class R2StorageService
     {
         $image = match ($mimeType) {
             'image/jpeg' => @imagecreatefromjpeg($filePath),
-            'image/png'  => @imagecreatefrompng($filePath),
+            'image/png' => @imagecreatefrompng($filePath),
             'image/webp' => @imagecreatefromwebp($filePath),
-            default      => null,
+            default => null,
         };
 
-        if (!$image) {
+        if (! $image) {
             return file_get_contents($filePath);
         }
 

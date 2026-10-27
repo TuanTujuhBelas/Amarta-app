@@ -17,12 +17,16 @@ class StudentDashboard extends Component
     use WithFileUploads;
 
     public ?Student $student = null;
+
     public ?RevisionRequest $activeRevision = null;
 
     // File Uploads for Revision
     public $new_photo;
+
     public $new_photo_kk;
+
     public $new_photo_akte_kia;
+
     public $new_photo_surat_sehat;
 
     public string $successMessage = '';
@@ -53,7 +57,7 @@ class StudentDashboard extends Component
      */
     public function submitRevision(): void
     {
-        if (!$this->student || !$this->activeRevision) {
+        if (! $this->student || ! $this->activeRevision) {
             return;
         }
 
@@ -75,7 +79,7 @@ class StudentDashboard extends Component
 
         $this->validate($rules);
 
-        DB::transaction(function () use ($requestedItems) {
+        DB::transaction(function () {
             $updates = [];
 
             // Foto Profil
@@ -129,16 +133,16 @@ class StudentDashboard extends Component
      */
     public function downloadPdf()
     {
-        if (!$this->student) {
+        if (! $this->student) {
             return;
         }
 
         $pdf = Pdf::loadView('pdf.student-card', ['student' => $this->student])
             ->setPaper('a4', 'portrait');
 
-        $filename = 'Kartu_Atlet_' . str_replace(['.', '-', ' '], '_', $this->student->account->id_position) . '.pdf';
+        $filename = 'Kartu_Atlet_'.str_replace(['.', '-', ' '], '_', $this->student->account->id_position).'.pdf';
 
-        return response()->streamDownload(fn () => print($pdf->output()), $filename);
+        return response()->streamDownload(fn () => print ($pdf->output()), $filename);
     }
 
     public function render()

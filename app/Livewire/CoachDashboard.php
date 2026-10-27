@@ -6,7 +6,6 @@ use App\Models\Account;
 use App\Models\RevisionRequest;
 use App\Models\Student;
 use App\Services\ActivityLogger;
-use App\Services\R2StorageService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -18,28 +17,36 @@ class CoachDashboard extends Component
 
     // Filter & Search
     public string $search = '';
+
     public string $filterRanting = '';
+
     public string $filterKategori = '';
+
     public string $filterStatus = '';
+
     public string $filterKelas = '';
 
     // Modal States
     public bool $showDetailModal = false;
+
     public bool $showRevisionModal = false;
+
     public ?Student $selectedStudent = null;
 
     // Revision Form
     public array $requestedItems = [];
+
     public string $revisionNotes = '';
 
     // Notification
     public string $alertMessage = '';
+
     public string $alertType = 'success';
 
     protected $queryString = [
-        'search'         => ['except' => ''],
-        'filterRanting'  => ['except' => ''],
-        'filterStatus'   => ['except' => ''],
+        'search' => ['except' => ''],
+        'filterRanting' => ['except' => ''],
+        'filterStatus' => ['except' => ''],
         'filterKategori' => ['except' => ''],
     ];
 
@@ -79,16 +86,16 @@ class CoachDashboard extends Component
     public function openRevision(int $studentId): void
     {
         $this->selectedStudent = Student::with('account')->findOrFail($studentId);
-        $this->requestedItems  = [];
-        $this->revisionNotes   = '';
+        $this->requestedItems = [];
+        $this->revisionNotes = '';
         $this->showRevisionModal = true;
     }
 
     public function closeRevision(): void
     {
         $this->showRevisionModal = false;
-        $this->requestedItems    = [];
-        $this->revisionNotes     = '';
+        $this->requestedItems = [];
+        $this->revisionNotes = '';
     }
 
     /**
@@ -113,7 +120,7 @@ class CoachDashboard extends Component
         );
 
         $this->alertMessage = "Atlet {$student->nama_lengkap} berhasil diverifikasi & disetujui.";
-        $this->alertType    = 'success';
+        $this->alertType = 'success';
 
         if ($this->showDetailModal) {
             $this->selectedStudent->refresh();
@@ -127,24 +134,24 @@ class CoachDashboard extends Component
     {
         $this->validate([
             'requestedItems' => 'required|array|min:1',
-            'revisionNotes'  => 'required|string|max:1000',
+            'revisionNotes' => 'required|string|max:1000',
         ], [
             'requestedItems.required' => 'Pilih minimal satu item dokumen yang harus direvisi.',
-            'requestedItems.min'      => 'Pilih minimal satu item dokumen yang harus direvisi.',
-            'revisionNotes.required'  => 'Catatan instruksi revisi wajib diisi untuk atlet.',
+            'requestedItems.min' => 'Pilih minimal satu item dokumen yang harus direvisi.',
+            'revisionNotes.required' => 'Catatan instruksi revisi wajib diisi untuk atlet.',
         ]);
 
-        if (!$this->selectedStudent) {
+        if (! $this->selectedStudent) {
             return;
         }
 
         // 1. Simpan ke t_revisi_request
         RevisionRequest::create([
-            'id_siswa'        => $this->selectedStudent->id,
-            'id_pelatih'      => Auth::id(),
+            'id_siswa' => $this->selectedStudent->id,
+            'id_pelatih' => Auth::id(),
             'requested_items' => $this->requestedItems,
-            'catatan'         => $this->revisionNotes,
-            'status'          => 'pending',
+            'catatan' => $this->revisionNotes,
+            'status' => 'pending',
         ]);
 
         // 2. Ubah status siswa ke need_revision
@@ -159,13 +166,13 @@ class CoachDashboard extends Component
             "Pelatih meminta revisi dokumen untuk atlet {$this->selectedStudent->nama_lengkap}",
             $this->selectedStudent->id,
             [
-                'items'   => $this->requestedItems,
+                'items' => $this->requestedItems,
                 'catatan' => $this->revisionNotes,
             ]
         );
 
         $this->alertMessage = "Instruksi revisi berhasil dikirim ke atlet {$this->selectedStudent->nama_lengkap}.";
-        $this->alertType    = 'warning';
+        $this->alertType = 'warning';
 
         $this->closeRevision();
         if ($this->showDetailModal) {
@@ -190,9 +197,9 @@ class CoachDashboard extends Component
         $pdf = Pdf::loadView('pdf.student-card', compact('student'))
             ->setPaper('a4', 'portrait');
 
-        $filename = 'Data_Atlet_' . str_replace(['.', '-', ' '], '_', $student->account->id_position) . '.pdf';
+        $filename = 'Data_Atlet_'.str_replace(['.', '-', ' '], '_', $student->account->id_position).'.pdf';
 
-        return response()->streamDownload(fn () => print($pdf->output()), $filename);
+        return response()->streamDownload(fn () => print ($pdf->output()), $filename);
     }
 
     public function render()
@@ -200,32 +207,32 @@ class CoachDashboard extends Component
         // Query Siswa dengan Filter
         $query = Student::with('account');
 
-        if (!empty($this->search)) {
-            $search = '%' . $this->search . '%';
+        if (! empty($this->search)) {
+            $search = '%'.$this->search.'%';
             $query->where(function ($q) use ($search) {
                 $q->where('nama_lengkap', 'LIKE', $search)
-                  ->orWhere('nama_sekolah', 'LIKE', $search)
-                  ->orWhereHas('account', function ($sub) use ($search) {
-                      $sub->where('id_position', 'LIKE', $search)
-                          ->orWhere('username', 'LIKE', $search)
-                          ->orWhere('nama_ranting', 'LIKE', $search);
-                  });
+                    ->orWhere('nama_sekolah', 'LIKE', $search)
+                    ->orWhereHas('account', function ($sub) use ($search) {
+                        $sub->where('id_position', 'LIKE', $search)
+                            ->orWhere('username', 'LIKE', $search)
+                            ->orWhere('nama_ranting', 'LIKE', $search);
+                    });
             });
         }
 
-        if (!empty($this->filterRanting)) {
+        if (! empty($this->filterRanting)) {
             $query->whereHas('account', fn ($q) => $q->where('nama_ranting', $this->filterRanting));
         }
 
-        if (!empty($this->filterStatus)) {
+        if (! empty($this->filterStatus)) {
             $query->where('status_verifikasi', $this->filterStatus);
         }
 
-        if (!empty($this->filterKategori)) {
+        if (! empty($this->filterKategori)) {
             $query->where('kategori', $this->filterKategori);
         }
 
-        if (!empty($this->filterKelas)) {
+        if (! empty($this->filterKelas)) {
             $query->where('kelas', $this->filterKelas);
         }
 
@@ -233,9 +240,9 @@ class CoachDashboard extends Component
 
         // Ringkasan Statistik
         $metrics = [
-            'total'         => Student::count(),
-            'pending'       => Student::where('status_verifikasi', 'pending')->count(),
-            'approved'      => Student::where('status_verifikasi', 'approved')->count(),
+            'total' => Student::count(),
+            'pending' => Student::where('status_verifikasi', 'pending')->count(),
+            'approved' => Student::where('status_verifikasi', 'approved')->count(),
             'need_revision' => Student::where('status_verifikasi', 'need_revision')->count(),
         ];
 
@@ -246,8 +253,8 @@ class CoachDashboard extends Component
             ->pluck('nama_ranting');
 
         return view('livewire.coach-dashboard', [
-            'students'       => $students,
-            'metrics'        => $metrics,
+            'students' => $students,
+            'metrics' => $metrics,
             'rantingOptions' => $rantingOptions,
         ])->layout('layouts.app', ['title' => 'Dashboard Pelatih - Garuda Amarta']);
     }

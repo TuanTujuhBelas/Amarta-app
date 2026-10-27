@@ -2,7 +2,9 @@
 
 namespace App\Providers;
 
+use App\Auth\Md5EloquentUserProvider;
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -25,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
 
-        \Illuminate\Support\Facades\Auth::provider('eloquent-md5', function ($app, array $config) {
-            return new \App\Auth\Md5EloquentUserProvider($app['hash'], $config['model']);
+        Auth::provider('eloquent-md5', function ($app, array $config) {
+            return new Md5EloquentUserProvider($app['hash'], $config['model']);
         });
     }
 

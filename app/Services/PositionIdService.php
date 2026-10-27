@@ -12,17 +12,17 @@ class PositionIdService
      * Belt codes mapping as defined in PRD.
      */
     protected const BELT_CODES = [
-        'Putih 001'   => '001',
-        'Kuning 002'  => '002',
-        'Merah 003'   => '003',
-        'Biru 005'    => '005',
+        'Putih 001' => '001',
+        'Kuning 002' => '002',
+        'Merah 003' => '003',
+        'Biru 005' => '005',
         'Cokelat 006' => '006',
-        'Hitam 007'   => '007',
+        'Hitam 007' => '007',
     ];
 
     /**
-     * Generate automatic atomic ID Position for athletes.
-     * Format: PLT.[Tahun]-[TglBln]-[KodeSabuk][Urut] (Contoh: PLT.2026-2610-001005)
+     * Generate automatic atomic ID Position for athletes/students.
+     * Format: SSW.[Tahun]-[TglBln]-[KodeSabuk][Urut] (Contoh: SSW.2026-2610-001005)
      */
     public function generate(string $beltName, ?Carbon $date = null): string
     {
@@ -31,7 +31,7 @@ class PositionIdService
         $dayMonth = $date->format('dm');
         $beltCode = self::BELT_CODES[$beltName] ?? '001';
 
-        $prefix = "PLT.{$year}-{$dayMonth}-{$beltCode}";
+        $prefix = "SSW.{$year}-{$dayMonth}-{$beltCode}";
 
         return DB::transaction(function () use ($prefix) {
             // Find highest existing sequence for this prefix with lock
@@ -41,7 +41,7 @@ class PositionIdService
                 ->first();
 
             $sequence = 1;
-            if ($latestAccount && !empty($latestAccount->id_position)) {
+            if ($latestAccount && ! empty($latestAccount->id_position)) {
                 $lastThreeDigits = substr($latestAccount->id_position, -3);
                 if (is_numeric($lastThreeDigits)) {
                     $sequence = ((int) $lastThreeDigits) + 1;
@@ -71,7 +71,7 @@ class PositionIdService
                 ->first();
 
             $sequence = 1;
-            if ($latestAccount && !empty($latestAccount->id_position)) {
+            if ($latestAccount && ! empty($latestAccount->id_position)) {
                 $lastThreeDigits = substr($latestAccount->id_position, -3);
                 if (is_numeric($lastThreeDigits)) {
                     $sequence = ((int) $lastThreeDigits) + 1;
