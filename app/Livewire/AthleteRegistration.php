@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Services\ActivityLogger;
 use App\Services\PositionIdService;
 use App\Services\R2StorageService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -65,12 +66,16 @@ class AthleteRegistration extends Component
     public string $no_kk = '';
 
     // Step 4: Upload Dokumen R2
+    /** @var mixed */
     public $photo;
 
+    /** @var mixed */
     public $photo_kk;
 
+    /** @var mixed */
     public $photo_akte_kia;
 
+    /** @var mixed */
     public $photo_surat_sehat;
 
     // State Sukses
@@ -228,7 +233,7 @@ class AthleteRegistration extends Component
         });
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.athlete-registration')
             ->layout('layouts.auth.simple', ['title' => 'Registrasi Atlet - Garuda Amarta']);

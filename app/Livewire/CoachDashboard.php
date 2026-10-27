@@ -7,9 +7,11 @@ use App\Models\RevisionRequest;
 use App\Models\Student;
 use App\Services\ActivityLogger;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Symfony\Component\HttpFoundation\Response;
 
 class CoachDashboard extends Component
 {
@@ -34,6 +36,7 @@ class CoachDashboard extends Component
     public ?Student $selectedStudent = null;
 
     // Revision Form
+    /** @var array<int, string> */
     public array $requestedItems = [];
 
     public string $revisionNotes = '';
@@ -43,6 +46,7 @@ class CoachDashboard extends Component
 
     public string $alertType = 'success';
 
+    /** @var array<string, mixed> */
     protected $queryString = [
         'search' => ['except' => ''],
         'filterRanting' => ['except' => ''],
@@ -111,10 +115,12 @@ class CoachDashboard extends Component
             ->where('status', 'pending')
             ->update(['status' => 'resolved']);
 
+        $idPosition = $student->account->id_position ?? '-';
+
         ActivityLogger::log(
             Auth::id(),
             'UPDATE_MANUAL',
-            "Pelatih menyetujui verifikasi data atlet {$student->nama_lengkap} ({$student->account->id_position})",
+            "Pelatih menyetujui verifikasi data atlet {$student->nama_lengkap} ({$idPosition})",
             $student->id,
             ['status_verifikasi' => 'approved']
         );
@@ -122,7 +128,7 @@ class CoachDashboard extends Component
         $this->alertMessage = "Atlet {$student->nama_lengkap} berhasil diverifikasi & disetujui.";
         $this->alertType = 'success';
 
-        if ($this->showDetailModal) {
+        if ($this->showDetailModal && $this->selectedStudent) {
             $this->selectedStudent->refresh();
         }
     }
@@ -148,7 +154,7 @@ class CoachDashboard extends Component
         // 1. Simpan ke t_revisi_request
         RevisionRequest::create([
             'id_siswa' => $this->selectedStudent->id,
-            'id_pelatih' => Auth::id(),
+            'id_pelatih' => (int) Auth::id(),
             'requested_items' => $this->requestedItems,
             'catatan' => $this->revisionNotes,
             'status' => 'pending',
@@ -183,26 +189,27 @@ class CoachDashboard extends Component
     /**
      * Unduh PDF biodata resmi atlet berlogo Garuda Amarta.
      */
-    public function exportPdf(int $studentId)
+    public function exportPdf(int $studentId): Response
     {
         $student = Student::with('account')->findOrFail($studentId);
+        $idPosition = $student->account->id_position ?? (string) $student->id;
 
         ActivityLogger::log(
             Auth::id(),
             'EXPORT_DATA',
-            "Pelatih mengunduh PDF biodata atlet {$student->nama_lengkap} ({$student->account->id_position})",
+            "Pelatih mengunduh PDF biodata atlet {$student->nama_lengkap} ({$idPosition})",
             $student->id
         );
 
         $pdf = Pdf::loadView('pdf.student-card', compact('student'))
             ->setPaper('a4', 'portrait');
 
-        $filename = 'Data_Atlet_'.str_replace(['.', '-', ' '], '_', $student->account->id_position).'.pdf';
+        $filename = 'Data_Atlet_'.str_replace(['.', '-', ' '], '_', $idPosition).'.pdf';
 
         return response()->streamDownload(fn () => print ($pdf->output()), $filename);
     }
 
-    public function render()
+    public function render(): View
     {
         // Query Siswa dengan Filter
         $query = Student::with('account');

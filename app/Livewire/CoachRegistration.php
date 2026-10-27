@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Services\ActivityLogger;
 use App\Services\PositionIdService;
 use App\Services\R2StorageService;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -28,6 +29,7 @@ class CoachRegistration extends Component
 
     public string $alamat = '';
 
+    /** @var mixed */
     public $photo;
 
     public bool $isSuccess = false;
@@ -36,6 +38,9 @@ class CoachRegistration extends Component
 
     public string $registeredName = '';
 
+    /**
+     * @return array<string, string>
+     */
     protected function rules(): array
     {
         return [
@@ -88,7 +93,7 @@ class CoachRegistration extends Component
         });
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.coach-registration')
             ->layout('layouts.auth.simple', ['title' => 'Registrasi Pelatih - Garuda Amarta']);

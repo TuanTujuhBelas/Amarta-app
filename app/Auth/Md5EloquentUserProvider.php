@@ -9,6 +9,8 @@ class Md5EloquentUserProvider extends EloquentUserProvider
 {
     /**
      * Validate a user against the given credentials using MD5.
+     *
+     * @param  array<string, mixed>  $credentials
      */
     public function validateCredentials(Authenticatable $user, array $credentials): bool
     {
@@ -29,6 +31,8 @@ class Md5EloquentUserProvider extends EloquentUserProvider
     /**
      * Disable Laravel automatic password rehashing.
      * Preserves the VARCHAR(32) MD5 format required by PRD.
+     *
+     * @param  array<string, mixed>  $credentials
      */
     public function rehashPasswordIfRequired(Authenticatable $user, #[\SensitiveParameter] array $credentials, bool $force = false): void
     {

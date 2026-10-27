@@ -82,8 +82,11 @@ class R2StorageService
             default => null,
         };
 
+        $raw = file_get_contents($filePath);
+        $fallback = $raw !== false ? $raw : '';
+
         if (! $image) {
-            return file_get_contents($filePath);
+            return $fallback;
         }
 
         // Get dimensions
@@ -94,18 +97,20 @@ class R2StorageService
         $maxWidth = 1600;
         if ($width > $maxWidth) {
             $newWidth = $maxWidth;
-            $newHeight = (int) ($height * ($maxWidth / $width));
+            $newHeight = max(1, (int) round($height * ($maxWidth / $width)));
             $resized = imagecreatetruecolor($newWidth, $newHeight);
 
-            // Preserve transparency if PNG
-            if ($mimeType === 'image/png') {
-                imagealphablending($resized, false);
-                imagesavealpha($resized, true);
-            }
+            if ($resized !== false) {
+                // Preserve transparency if PNG
+                if ($mimeType === 'image/png') {
+                    imagealphablending($resized, false);
+                    imagesavealpha($resized, true);
+                }
 
-            imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-            imagedestroy($image);
-            $image = $resized;
+                imagecopyresampled($resized, $image, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+                imagedestroy($image);
+                $image = $resized;
+            }
         }
 
         ob_start();
@@ -113,6 +118,6 @@ class R2StorageService
         $output = ob_get_clean();
         imagedestroy($image);
 
-        return $output ?: file_get_contents($filePath);
+        return ($output !== false && $output !== '') ? $output : $fallback;
     }
 }

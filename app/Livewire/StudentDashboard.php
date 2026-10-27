@@ -7,10 +7,12 @@ use App\Models\Student;
 use App\Services\ActivityLogger;
 use App\Services\R2StorageService;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 use Livewire\WithFileUploads;
+use Symfony\Component\HttpFoundation\Response;
 
 class StudentDashboard extends Component
 {
@@ -21,12 +23,16 @@ class StudentDashboard extends Component
     public ?RevisionRequest $activeRevision = null;
 
     // File Uploads for Revision
+    /** @var mixed */
     public $new_photo;
 
+    /** @var mixed */
     public $new_photo_kk;
 
+    /** @var mixed */
     public $new_photo_akte_kia;
 
+    /** @var mixed */
     public $new_photo_surat_sehat;
 
     public string $successMessage = '';
@@ -79,46 +85,49 @@ class StudentDashboard extends Component
 
         $this->validate($rules);
 
-        DB::transaction(function () {
+        $student = $this->student;
+        $activeRevision = $this->activeRevision;
+
+        DB::transaction(function () use ($student, $activeRevision) {
             $updates = [];
 
             // Foto Profil
             if ($this->new_photo) {
-                R2StorageService::delete($this->student->photo);
+                R2StorageService::delete($student->photo);
                 $updates['photo'] = R2StorageService::uploadCompressed($this->new_photo, 'athletes/profiles');
-                $this->student->account->update(['photo' => $updates['photo']]);
+                $student->account?->update(['photo' => $updates['photo']]);
             }
 
             // Foto KK
             if ($this->new_photo_kk) {
-                R2StorageService::delete($this->student->photo_kk);
+                R2StorageService::delete($student->photo_kk);
                 $updates['photo_kk'] = R2StorageService::uploadCompressed($this->new_photo_kk, 'athletes/kk');
             }
 
             // Foto Akte / KIA
             if ($this->new_photo_akte_kia) {
-                R2StorageService::delete($this->student->photo_akte_kia);
+                R2StorageService::delete($student->photo_akte_kia);
                 $updates['photo_akte_kia'] = R2StorageService::uploadCompressed($this->new_photo_akte_kia, 'athletes/akte');
             }
 
             // Foto Surat Sehat
             if ($this->new_photo_surat_sehat) {
-                R2StorageService::delete($this->student->photo_surat_sehat);
+                R2StorageService::delete($student->photo_surat_sehat);
                 $updates['photo_surat_sehat'] = R2StorageService::uploadCompressed($this->new_photo_surat_sehat, 'athletes/surat_sehat');
             }
 
             $updates['status_verifikasi'] = 'pending';
-            $this->student->update($updates);
+            $student->update($updates);
 
             // Tandai revisi request sebagai resolved
-            $this->activeRevision->update(['status' => 'resolved']);
+            $activeRevision->update(['status' => 'resolved']);
 
             // Audit Log
             ActivityLogger::log(
                 Auth::id(),
                 'SUBMIT_REVISION',
-                "Siswa mengunggah ulang dokumen revisi ({$this->student->nama_lengkap})",
-                $this->student->id,
+                "Siswa mengunggah ulang dokumen revisi ({$student->nama_lengkap})",
+                $student->id,
                 ['updated_items' => array_keys($updates)]
             );
         });
@@ -131,21 +140,22 @@ class StudentDashboard extends Component
     /**
      * Unduh PDF data diri resmi atlet.
      */
-    public function downloadPdf()
+    public function downloadPdf(): ?Response
     {
         if (! $this->student) {
-            return;
+            return null;
         }
 
         $pdf = Pdf::loadView('pdf.student-card', ['student' => $this->student])
             ->setPaper('a4', 'portrait');
 
-        $filename = 'Kartu_Atlet_'.str_replace(['.', '-', ' '], '_', $this->student->account->id_position).'.pdf';
+        $idPosition = $this->student->account->id_position ?? (string) $this->student->id;
+        $filename = 'Kartu_Atlet_'.str_replace(['.', '-', ' '], '_', $idPosition).'.pdf';
 
         return response()->streamDownload(fn () => print ($pdf->output()), $filename);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.student-dashboard')
             ->layout('layouts.app', ['title' => 'Dashboard Atlet - Garuda Amarta']);

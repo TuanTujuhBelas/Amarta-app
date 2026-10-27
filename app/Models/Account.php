@@ -2,11 +2,32 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
+/**
+ * @property int $id
+ * @property string|null $nama
+ * @property string $username
+ * @property string $password
+ * @property string $status
+ * @property string|null $id_position
+ * @property string|null $photo
+ * @property string|null $alamat
+ * @property string|null $email
+ * @property string|null $nama_ranting
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read string $name
+ * @property-read Student|null $student
+ * @property-read Collection<int, RevisionRequest> $revisionRequests
+ * @property-read Collection<int, ActivityLog> $activityLogs
+ */
 class Account extends Authenticatable
 {
     use Notifiable;
@@ -31,17 +52,26 @@ class Account extends Authenticatable
         'password',
     ];
 
+    /**
+     * @return HasOne<Student, $this>
+     */
     public function student(): HasOne
     {
         return $this->hasOne(Student::class, 'id_account');
     }
 
-    public function revisionRequests()
+    /**
+     * @return HasMany<RevisionRequest, $this>
+     */
+    public function revisionRequests(): HasMany
     {
         return $this->hasMany(RevisionRequest::class, 'id_pelatih');
     }
 
-    public function activityLogs()
+    /**
+     * @return HasMany<ActivityLog, $this>
+     */
+    public function activityLogs(): HasMany
     {
         return $this->hasMany(ActivityLog::class, 'id_account');
     }
