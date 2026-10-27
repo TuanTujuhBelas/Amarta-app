@@ -4,6 +4,7 @@ use App\Livewire\AthleteRegistration;
 use App\Livewire\CoachDashboard;
 use App\Livewire\CoachRegistration;
 use App\Livewire\StudentDashboard;
+use App\Models\Account;
 use App\Services\R2StorageService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
@@ -17,11 +18,14 @@ Route::get('/register/pelatih', CoachRegistration::class)->name('register.coach'
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-        if (auth()->user()->isCoach()) {
-            return redirect()->route('coach.dashboard');
+        $user = auth()->user();
+        if ($user instanceof Account) {
+            return $user->isCoach()
+                ? redirect()->route('coach.dashboard')
+                : redirect()->route('student.dashboard');
         }
 
-        return redirect()->route('student.dashboard');
+        return view('dashboard');
     })->name('dashboard');
 
     Route::get('/coach/dashboard', CoachDashboard::class)->name('coach.dashboard');
