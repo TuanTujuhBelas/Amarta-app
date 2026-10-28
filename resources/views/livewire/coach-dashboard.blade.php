@@ -1,17 +1,18 @@
 <div class="space-y-6">
     <!-- Top Welcome Banner -->
-    <div class="bg-royal-blue text-white rounded-2xl p-6 md:p-8 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-vibrant-yellow mb-2">
-                <span>🥋 Panel Pelatih Resmi</span>
-                <span>•</span>
-                <span>{{ auth()->user()->nama_ranting ?? 'Pusat' }}</span>
+    <div class="bg-royal-blue text-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="min-w-0">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-[11px] sm:text-xs font-semibold text-white mb-2">
+                <flux:icon.academic-cap variant="micro" class="size-3.5" />
+                <span>Panel Pelatih Resmi</span>
+                <span class="opacity-60">•</span>
+                <span class="truncate">{{ auth()->user()->nama_ranting ?? 'Pusat' }}</span>
             </div>
-            <h1 class="text-2xl md:text-3xl font-black text-white">Selamat Datang, Pelatih {{ auth()->user()->nama }}!</h1>
-            <p class="text-blue-100 text-sm mt-1">Kelola verifikasi atlet, tindak lanjut revisi berkas, dan pencetakan dokumen resmi Garuda Amarta.</p>
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-white break-words">Selamat Datang, Pelatih {{ auth()->user()->nama }}!</h1>
+            <p class="text-blue-100 text-xs sm:text-sm mt-1">Kelola verifikasi atlet, tindak lanjut revisi berkas, dan pencetakan dokumen resmi Garuda Amarta.</p>
         </div>
-        <div class="flex items-center gap-2">
-            <span class="px-4 py-2 rounded-xl bg-white/10 text-xs font-mono font-bold tracking-wider text-vibrant-yellow border border-white/20">
+        <div class="shrink-0">
+            <span class="inline-flex items-center min-h-[40px] px-4 py-2 rounded-xl bg-white/10 text-xs font-mono font-bold tracking-wider text-white border border-white/20">
                 ID: {{ auth()->user()->id_position }}
             </span>
         </div>
@@ -80,9 +81,9 @@
                 <label class="block text-xs font-semibold text-neutral-500 mb-1">Status</label>
                 <select wire:model.live="filterStatus" class="w-full min-h-[44px] px-3 rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-sm text-neutral-900 dark:text-white outline-none focus:ring-2 focus:ring-royal-blue">
                     <option value="">Semua Status</option>
-                    <option value="pending">🟡 Pending</option>
-                    <option value="approved">🟢 Terverifikasi</option>
-                    <option value="need_revision">🔴 Perlu Revisi</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Terverifikasi</option>
+                    <option value="need_revision">Perlu Revisi</option>
                 </select>
             </div>
 
@@ -99,7 +100,7 @@
 
             <!-- Ekspor Bulk ZIP Button -->
             <div class="md:col-span-3">
-                <button wire:click="exportZip" wire:loading.attr="disabled" class="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-vibrant-yellow hover:bg-yellow-400 text-neutral-950 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition disabled:opacity-50 cursor-pointer">
+                <button wire:click="exportZip" wire:loading.attr="disabled" class="w-full min-h-[44px] px-4 py-2.5 rounded-xl bg-royal-blue hover:bg-blue-700 text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xs transition disabled:opacity-50 cursor-pointer">
                     <span wire:loading.remove wire:target="exportZip" class="flex items-center gap-2">
                         <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         Ekspor Paket ZIP
@@ -113,9 +114,10 @@
         </div>
     </div>
 
-    <!-- Tabel Data Atlet -->
+    <!-- Data Atlet: Desktop Table + Mobile Card List -->
     <div class="bg-white dark:bg-neutral-900 rounded-2xl border border-neutral-200 dark:border-neutral-800 shadow-sm overflow-hidden">
-        <div class="overflow-x-auto">
+        <!-- Desktop Table -->
+        <div class="hidden lg:block overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead class="bg-neutral-50 dark:bg-neutral-800/60 border-b border-neutral-200 dark:border-neutral-800 text-xs text-neutral-500 uppercase tracking-wider">
                     <tr>
@@ -190,26 +192,22 @@
                             <!-- Actions -->
                             <td class="px-5 py-4 text-right">
                                 <div class="inline-flex items-center gap-1.5">
-                                    <!-- Detail Dokumen -->
-                                    <button wire:click="openDetail({{ $student->id }})" title="Lihat Berkas & Detail" class="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition">
-                                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    <button wire:click="openDetail({{ $student->id }})" title="Lihat Berkas & Detail" aria-label="Lihat Berkas Atlet" class="p-2 rounded-lg bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 text-neutral-700 dark:text-neutral-200 transition">
+                                        <flux:icon.eye variant="outline" class="size-4" />
                                     </button>
 
-                                    <!-- Setujui / Approve -->
                                     @if ($student->status_verifikasi !== 'approved')
-                                        <button wire:click="approve({{ $student->id }})" title="Setujui Verifikasi" class="p-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800 transition">
-                                            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                        <button wire:click="approve({{ $student->id }})" title="Setujui Verifikasi" aria-label="Setujui Verifikasi Atlet" class="p-2 rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-400 dark:border-emerald-800 transition">
+                                            <flux:icon.check variant="outline" class="size-4" />
                                         </button>
                                     @endif
 
-                                    <!-- Minta Revisi -->
-                                    <button wire:click="openRevision({{ $student->id }})" title="Minta Revisi Dokumen" class="p-2 rounded-lg bg-rose-50 text-crimson-red hover:bg-crimson-red hover:text-white border border-rose-200 dark:bg-rose-950/40 dark:border-rose-900 transition">
-                                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                                    <button wire:click="openRevision({{ $student->id }})" title="Minta Revisi Dokumen" aria-label="Minta Revisi Dokumen" class="p-2 rounded-lg bg-rose-50 text-crimson-red hover:bg-crimson-red hover:text-white border border-rose-200 dark:bg-rose-950/40 dark:border-rose-900 transition">
+                                        <flux:icon.exclamation-triangle variant="outline" class="size-4" />
                                     </button>
 
-                                    <!-- Ekspor PDF -->
-                                    <button wire:click="exportPdf({{ $student->id }})" title="Unduh Biodata PDF" class="p-2 rounded-lg bg-blue-50 text-royal-blue hover:bg-royal-blue hover:text-white border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900 transition">
-                                        <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                                    <button wire:click="exportPdf({{ $student->id }})" title="Unduh Biodata PDF" aria-label="Unduh Biodata PDF" class="p-2 rounded-lg bg-blue-50 text-royal-blue hover:bg-royal-blue hover:text-white border border-blue-200 dark:bg-blue-950/40 dark:text-blue-400 dark:border-blue-900 transition">
+                                        <flux:icon.arrow-down-tray variant="outline" class="size-4" />
                                     </button>
                                 </div>
                             </td>
@@ -217,13 +215,105 @@
                     @empty
                         <tr>
                             <td colspan="6" class="px-5 py-12 text-center text-neutral-400">
-                                <svg class="size-12 mx-auto text-neutral-300 dark:text-neutral-700 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <flux:icon.inbox variant="outline" class="size-12 mx-auto text-neutral-300 dark:text-neutral-700 mb-2" />
                                 <p class="font-medium text-sm">Belum ada data atlet yang sesuai dengan filter pencarian.</p>
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile / Tablet Card List -->
+        <div class="lg:hidden divide-y divide-neutral-200 dark:divide-neutral-800">
+            @forelse ($students as $student)
+                @php $photoUrl = \App\Services\R2StorageService::url($student->photo); @endphp
+                <div class="p-4 space-y-3">
+                    <!-- Header: Foto + Nama + Status -->
+                    <div class="flex items-start gap-3">
+                        @if ($photoUrl)
+                            <img src="{{ $photoUrl }}" class="size-12 object-cover rounded-xl border border-neutral-200 dark:border-neutral-700 shrink-0" alt="{{ $student->nama_lengkap }}" />
+                        @else
+                            <div class="size-12 rounded-xl bg-neutral-200 dark:bg-neutral-700 flex items-center justify-center font-bold text-neutral-500 text-sm shrink-0">
+                                {{ substr($student->nama_lengkap, 0, 2) }}
+                            </div>
+                        @endif
+
+                        <div class="min-w-0 flex-1">
+                            <p class="font-bold text-neutral-900 dark:text-white leading-tight truncate">{{ $student->nama_lengkap }}</p>
+                            <p class="text-xs font-mono text-royal-blue dark:text-blue-400 font-semibold mt-0.5">{{ $student->account->id_position ?? '-' }}</p>
+                        </div>
+
+                        <div class="shrink-0">
+                            @if ($student->status_verifikasi === 'approved')
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                    <span class="size-1.5 rounded-full bg-emerald-600"></span>Disetujui
+                                </span>
+                            @elseif ($student->status_verifikasi === 'need_revision')
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+                                    <span class="size-1.5 rounded-full bg-crimson-red"></span>Revisi
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                                    <span class="size-1.5 rounded-full bg-amber-500 animate-pulse"></span>Pending
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Info Grid -->
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <div>
+                            <p class="text-neutral-400 text-[10px] uppercase font-bold">Ranting</p>
+                            <p class="font-semibold text-neutral-800 dark:text-neutral-200 truncate">{{ $student->account->nama_ranting ?? '-' }}</p>
+                        </div>
+                        <div>
+                            <p class="text-neutral-400 text-[10px] uppercase font-bold">Sabuk</p>
+                            <p class="font-semibold text-neutral-800 dark:text-neutral-200 truncate">{{ $student->tingkat_sabuk }}</p>
+                        </div>
+                        <div>
+                            <p class="text-neutral-400 text-[10px] uppercase font-bold">Tingkat / Kategori</p>
+                            <p class="font-semibold text-neutral-800 dark:text-neutral-200">{{ $student->tingkat }} <span class="text-royal-blue dark:text-blue-400">{{ $student->kategori }}</span></p>
+                        </div>
+                        <div>
+                            <p class="text-neutral-400 text-[10px] uppercase font-bold">Fisik (BB / TB)</p>
+                            <p class="font-semibold text-neutral-800 dark:text-neutral-200">{{ $student->berat_badan }} kg / {{ $student->tinggi_badan }} cm</p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="grid grid-cols-4 gap-1.5 pt-2 border-t border-neutral-200 dark:border-neutral-800">
+                        <button wire:click="openDetail({{ $student->id }})" aria-label="Lihat Berkas" class="min-h-[44px] rounded-lg bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 text-neutral-700 dark:text-neutral-200 inline-flex items-center justify-center gap-1 text-[11px] font-semibold">
+                            <flux:icon.eye variant="outline" class="size-4" />
+                            <span class="hidden sm:inline">Detail</span>
+                        </button>
+
+                        @if ($student->status_verifikasi !== 'approved')
+                            <button wire:click="approve({{ $student->id }})" aria-label="Setujui" class="min-h-[44px] rounded-lg bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border border-emerald-200 inline-flex items-center justify-center gap-1 text-[11px] font-semibold">
+                                <flux:icon.check variant="outline" class="size-4" />
+                                <span class="hidden sm:inline">Setujui</span>
+                            </button>
+                        @else
+                            <div></div>
+                        @endif
+
+                        <button wire:click="openRevision({{ $student->id }})" aria-label="Minta Revisi" class="min-h-[44px] rounded-lg bg-rose-50 text-crimson-red hover:bg-crimson-red hover:text-white border border-rose-200 inline-flex items-center justify-center gap-1 text-[11px] font-semibold">
+                            <flux:icon.exclamation-triangle variant="outline" class="size-4" />
+                            <span class="hidden sm:inline">Revisi</span>
+                        </button>
+
+                        <button wire:click="exportPdf({{ $student->id }})" aria-label="Unduh PDF" class="min-h-[44px] rounded-lg bg-blue-50 text-royal-blue hover:bg-royal-blue hover:text-white border border-blue-200 inline-flex items-center justify-center gap-1 text-[11px] font-semibold">
+                            <flux:icon.arrow-down-tray variant="outline" class="size-4" />
+                            <span class="hidden sm:inline">PDF</span>
+                        </button>
+                    </div>
+                </div>
+            @empty
+                <div class="px-5 py-12 text-center text-neutral-400">
+                    <flux:icon.inbox variant="outline" class="size-12 mx-auto text-neutral-300 dark:text-neutral-700 mb-2" />
+                    <p class="font-medium text-sm">Belum ada data atlet yang sesuai dengan filter pencarian.</p>
+                </div>
+            @endforelse
         </div>
 
         <!-- Pagination -->
@@ -333,19 +423,19 @@
                 </div>
 
                 <!-- Modal Footer Actions -->
-                <div class="px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/50 flex items-center justify-between gap-3">
-                    <button wire:click="closeDetail" class="px-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-semibold">Tutup</button>
-                    
-                    <div class="flex items-center gap-2">
-                        <button wire:click="exportPdf({{ $selectedStudent->id }})" class="px-4 py-2 rounded-xl bg-blue-50 text-royal-blue border border-blue-300 hover:bg-royal-blue hover:text-white text-sm font-semibold transition inline-flex items-center gap-1.5">
-                            <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                <div class="px-4 sm:px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50 dark:bg-neutral-800/50 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <button wire:click="closeDetail" class="min-h-[44px] px-4 py-2 rounded-xl border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-300 text-sm font-semibold order-last sm:order-first">Tutup</button>
+
+                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                        <button wire:click="exportPdf({{ $selectedStudent->id }})" class="min-h-[44px] px-4 py-2 rounded-xl bg-blue-50 text-royal-blue border border-blue-300 hover:bg-royal-blue hover:text-white text-sm font-semibold transition inline-flex items-center justify-center gap-1.5">
+                            <flux:icon.arrow-down-tray variant="outline" class="size-4" />
                             <span>Kartu Anggota (PDF)</span>
                         </button>
-                        <button wire:click="openRevision({{ $selectedStudent->id }})" class="px-4 py-2 rounded-xl bg-rose-50 text-crimson-red border border-rose-300 hover:bg-crimson-red hover:text-white text-sm font-semibold transition">
+                        <button wire:click="openRevision({{ $selectedStudent->id }})" class="min-h-[44px] px-4 py-2 rounded-xl bg-rose-50 text-crimson-red border border-rose-300 hover:bg-crimson-red hover:text-white text-sm font-semibold transition">
                             Minta Revisi Berkas
                         </button>
                         @if ($selectedStudent->status_verifikasi !== 'approved')
-                            <button wire:click="approve({{ $selectedStudent->id }})" class="px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition">
+                            <button wire:click="approve({{ $selectedStudent->id }})" class="min-h-[44px] px-5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition">
                                 Setujui & Sahkan Atlet
                             </button>
                         @endif
@@ -411,8 +501,8 @@
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
             <div class="bg-white dark:bg-neutral-900 rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl border-2 border-royal-blue space-y-5 animate-in fade-in zoom-in-95 duration-200">
                 <div class="text-center space-y-2">
-                    <div class="size-14 rounded-full bg-blue-100 dark:bg-blue-950/60 text-royal-blue dark:text-blue-400 flex items-center justify-center mx-auto text-2xl">
-                        🔐
+                    <div class="size-14 rounded-full bg-blue-100 dark:bg-blue-950/60 text-royal-blue dark:text-blue-400 flex items-center justify-center mx-auto">
+                        <flux:icon.shield-check variant="outline" class="size-7" />
                     </div>
                     <h2 class="text-xl font-black text-neutral-900 dark:text-white">Pembaruan Keamanan Pertama Kali</h2>
                     <p class="text-xs text-neutral-600 dark:text-neutral-400">

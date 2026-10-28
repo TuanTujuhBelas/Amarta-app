@@ -71,6 +71,34 @@ class R2StorageService
     }
 
     /**
+     * Return the file content as a base64 data URI (for embedding in PDF / email).
+     *
+     * Why: route "/document/{path}" di belakang middleware auth → DomPDF tidak bisa fetch via HTTP
+     * karena request server-side tidak membawa session cookie. Base64 inlines the binary.
+     */
+    public static function base64(?string $path): ?string
+    {
+        if (empty($path)) {
+            return null;
+        }
+
+        $disk = self::disk();
+
+        if (! Storage::disk($disk)->exists($path)) {
+            return null;
+        }
+
+        $content = Storage::disk($disk)->get($path);
+        if ($content === null || $content === '') {
+            return null;
+        }
+
+        $mimeType = Storage::disk($disk)->mimeType($path) ?: 'image/jpeg';
+
+        return 'data:'.$mimeType.';base64,'.base64_encode($content);
+    }
+
+    /**
      * Compress image using PHP GD to save bandwidth.
      */
     protected static function compressImage(string $filePath, string $mimeType): string

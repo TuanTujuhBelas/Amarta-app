@@ -1,17 +1,18 @@
 <div class="space-y-6 max-w-4xl mx-auto">
     <!-- Header Banner -->
-    <div class="bg-royal-blue text-white rounded-2xl p-6 md:p-8 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-        <div>
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-vibrant-yellow mb-2">
-                <span>🥋 Portal Atlet Resmi</span>
-                <span>•</span>
-                <span>{{ $student->account->nama_ranting ?? 'Garuda Amarta' }}</span>
+    <div class="bg-royal-blue text-white rounded-2xl p-5 sm:p-6 md:p-8 shadow-lg flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="min-w-0">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-[11px] sm:text-xs font-semibold text-white mb-2">
+                <flux:icon.academic-cap variant="micro" class="size-3.5" />
+                <span>Portal Atlet Resmi</span>
+                <span class="opacity-60">•</span>
+                <span class="truncate">{{ $student->account->nama_ranting ?? 'Garuda Amarta' }}</span>
             </div>
-            <h1 class="text-2xl md:text-3xl font-black text-white">Halo, {{ $student->nama_lengkap ?? auth()->user()->nama }}!</h1>
-            <p class="text-blue-100 text-sm mt-1">Pantau status verifikasi keanggotaan dan kelengkapan dokumen pencak silat Anda.</p>
+            <h1 class="text-xl sm:text-2xl md:text-3xl font-black text-white break-words">Halo, {{ $student->nama_lengkap ?? auth()->user()->nama }}!</h1>
+            <p class="text-blue-100 text-xs sm:text-sm mt-1">Pantau status verifikasi keanggotaan dan kelengkapan dokumen pencak silat Anda.</p>
         </div>
-        <div>
-            <span class="px-4 py-2 rounded-xl bg-white/10 text-xs font-mono font-bold tracking-wider text-vibrant-yellow border border-white/20">
+        <div class="shrink-0">
+            <span class="inline-flex items-center min-h-[40px] px-4 py-2 rounded-xl bg-white/10 text-xs font-mono font-bold tracking-wider text-white border border-white/20">
                 ID: {{ $student->account->id_position ?? auth()->user()->id_position }}
             </span>
         </div>
@@ -136,72 +137,54 @@
         @endif
 
         <!-- KARTU ANGGOTA ATLET (SESUAI PRD BAGIAN 5) -->
-        <div class="bg-white dark:bg-neutral-900 rounded-3xl p-6 md:p-8 shadow-xl border-2 border-royal-blue/30 max-w-2xl mx-auto space-y-6">
+        <div class="bg-white dark:bg-neutral-900 rounded-3xl p-5 sm:p-6 md:p-8 shadow-xl border-2 border-royal-blue/30 max-w-2xl mx-auto space-y-6">
             <!-- Header Kartu -->
-            <div class="flex items-center gap-4 pb-4 border-b-2 border-royal-blue">
-                <img src="{{ asset('gama.png') }}" class="size-16 object-contain" alt="Logo Garuda Amarta" />
-                <div>
-                    <h2 class="text-2xl font-black text-royal-blue dark:text-blue-400 tracking-wide uppercase">GARUDA AMARTA</h2>
-                    <h3 class="text-sm font-bold text-amber-600 dark:text-amber-400 tracking-widest uppercase">KARTU ANGGOTA ATLET</h3>
+            <div class="flex items-center gap-3 sm:gap-4 pb-4 border-b-2 border-royal-blue">
+                <img src="{{ asset('gama.png') }}" class="size-12 sm:size-16 object-contain shrink-0" alt="Logo Garuda Amarta" />
+                <div class="min-w-0">
+                    <h2 class="text-lg sm:text-2xl font-black text-royal-blue dark:text-blue-400 tracking-wide uppercase">GARUDA AMARTA</h2>
+                    <h3 class="text-[11px] sm:text-sm font-bold text-neutral-500 dark:text-neutral-400 tracking-widest uppercase">KARTU ANGGOTA ATLET</h3>
                 </div>
             </div>
 
             <!-- Body Kartu -->
-            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 py-2">
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 sm:gap-6 py-2">
                 @php $fotoUrl = \App\Services\R2StorageService::url($student->photo); @endphp
                 <div class="shrink-0">
                     @if ($fotoUrl)
-                        <img src="{{ $fotoUrl }}" class="w-32 h-44 object-cover rounded-xl border-2 border-amber-500 shadow-md" alt="{{ $student->nama_lengkap }}" />
+                        <img src="{{ $fotoUrl }}" class="w-28 h-40 sm:w-32 sm:h-44 object-cover rounded-xl border-2 border-royal-blue/40 shadow-md" alt="{{ $student->nama_lengkap }}" />
                     @else
-                        <div class="w-32 h-44 rounded-xl bg-neutral-100 dark:bg-neutral-800 border-2 border-dashed border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-xs text-neutral-400">
-                            FOTO PROFIL (ATLET)
+                        <div class="w-28 h-40 sm:w-32 sm:h-44 rounded-xl bg-neutral-100 dark:bg-neutral-800 border-2 border-dashed border-neutral-300 dark:border-neutral-700 flex items-center justify-center text-xs text-neutral-400 text-center px-2">
+                            FOTO PROFIL ATLET
                         </div>
                     @endif
                 </div>
 
-                <div class="flex-1 w-full space-y-2.5 text-sm">
-                    <div class="flex items-start">
-                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Nama Lengkap</span>
-                        <span class="text-neutral-500 mr-2">:</span>
-                        <strong class="text-neutral-900 dark:text-white font-bold">{{ $student->nama_lengkap }}</strong>
-                    </div>
+                <dl class="flex-1 w-full grid grid-cols-[auto_1fr] gap-x-3 gap-y-2.5 text-xs sm:text-sm">
+                    <dt class="text-neutral-500 font-semibold">Nama Lengkap</dt>
+                    <dd class="text-neutral-900 dark:text-white font-bold break-words">{{ $student->nama_lengkap }}</dd>
 
-                    <div class="flex items-start">
-                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Tanggal Lahir</span>
-                        <span class="text-neutral-500 mr-2">:</span>
-                        <span class="text-neutral-800 dark:text-neutral-200">{{ $student->tanggal_lahir ? $student->tanggal_lahir->translatedFormat('d F Y') : '-' }}</span>
-                    </div>
+                    <dt class="text-neutral-500 font-semibold">Tanggal Lahir</dt>
+                    <dd class="text-neutral-800 dark:text-neutral-200">{{ $student->tanggal_lahir ? $student->tanggal_lahir->translatedFormat('d F Y') : '-' }}</dd>
 
-                    <div class="flex items-start">
-                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Sabuk</span>
-                        <span class="text-neutral-500 mr-2">:</span>
-                        <strong class="text-neutral-900 dark:text-white font-bold">{{ $student->nama_sabuk }}</strong>
-                    </div>
+                    <dt class="text-neutral-500 font-semibold">Sabuk</dt>
+                    <dd class="text-neutral-900 dark:text-white font-bold">{{ $student->nama_sabuk }}</dd>
 
-                    <div class="flex items-start">
-                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Ranting</span>
-                        <span class="text-neutral-500 mr-2">:</span>
-                        <span class="text-neutral-800 dark:text-neutral-200">{{ $student->account->nama_ranting ?? $student->account->ranting?->nm_ranting ?? '-' }}</span>
-                    </div>
+                    <dt class="text-neutral-500 font-semibold">Ranting</dt>
+                    <dd class="text-neutral-800 dark:text-neutral-200 break-words">{{ $student->account->nama_ranting ?? $student->account->ranting?->nm_ranting ?? '-' }}</dd>
 
-                    <div class="flex items-start">
-                        <span class="w-36 text-neutral-500 font-semibold shrink-0">Email</span>
-                        <span class="text-neutral-500 mr-2">:</span>
-                        <span class="text-neutral-800 dark:text-neutral-200">{{ $student->account->email ?? '-' }}</span>
-                    </div>
+                    <dt class="text-neutral-500 font-semibold">Email</dt>
+                    <dd class="text-neutral-800 dark:text-neutral-200 break-all">{{ $student->account->email ?? '-' }}</dd>
 
-                    <div class="flex items-start">
-                        <span class="w-36 text-neutral-500 font-semibold shrink-0">ID Position</span>
-                        <span class="text-neutral-500 mr-2">:</span>
-                        <span class="font-mono font-bold text-royal-blue dark:text-blue-400">{{ $student->account->id_position ?? '-' }}</span>
-                    </div>
-                </div>
+                    <dt class="text-neutral-500 font-semibold">ID Position</dt>
+                    <dd class="font-mono font-bold text-royal-blue dark:text-blue-400 break-all">{{ $student->account->id_position ?? '-' }}</dd>
+                </dl>
             </div>
 
             <!-- Footer & Tombol Download -->
             <div class="pt-4 border-t border-neutral-200 dark:border-neutral-800">
                 <button wire:click="downloadPdf" class="w-full min-h-[48px] rounded-2xl bg-royal-blue hover:bg-blue-700 text-white font-bold text-sm shadow-lg inline-flex items-center justify-center gap-2 transition">
-                    <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                    <flux:icon.arrow-down-tray variant="outline" class="size-5" />
                     <span>DOWNLOAD KARTU ANGGOTA (PDF)</span>
                 </button>
             </div>
@@ -217,8 +200,8 @@
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
             <div class="bg-white dark:bg-neutral-900 rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl border-2 border-royal-blue space-y-5 animate-in fade-in zoom-in-95 duration-200">
                 <div class="text-center space-y-2">
-                    <div class="size-14 rounded-full bg-blue-100 dark:bg-blue-950/60 text-royal-blue dark:text-blue-400 flex items-center justify-center mx-auto text-2xl">
-                        🔐
+                    <div class="size-14 rounded-full bg-blue-100 dark:bg-blue-950/60 text-royal-blue dark:text-blue-400 flex items-center justify-center mx-auto">
+                        <flux:icon.key variant="outline" class="size-7" />
                     </div>
                     <h2 class="text-xl font-black text-neutral-900 dark:text-white">Pembaruan Kata Sandi Akun</h2>
                     <p class="text-xs text-neutral-600 dark:text-neutral-400">

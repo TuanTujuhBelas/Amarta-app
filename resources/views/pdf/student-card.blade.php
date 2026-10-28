@@ -172,10 +172,10 @@
             <tr>
                 <td class="photo-cell">
                     @php
-                        $photoUrl = \App\Services\R2StorageService::url($student->photo);
+                        $photoDataUri = \App\Services\R2StorageService::base64($student->photo);
                     @endphp
-                    @if ($photoUrl)
-                        <img src="{{ $photoUrl }}" class="photo-frame" alt="Foto Atlet" />
+                    @if ($photoDataUri)
+                        <img src="{{ $photoDataUri }}" class="photo-frame" alt="Foto Atlet" />
                     @else
                         <div class="photo-placeholder">FOTO PROFIL</div>
                     @endif

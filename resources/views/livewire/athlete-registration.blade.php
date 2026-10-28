@@ -1,30 +1,58 @@
-<div class="w-full max-w-xl mx-auto">
+<div class="w-full max-w-2xl mx-auto">
     <!-- Header Garuda Amarta -->
-    <div class="bg-royal-blue rounded-2xl p-6 text-white shadow-lg mb-6 text-center">
-        <div class="inline-flex items-center justify-center size-14 rounded-full bg-white/10 mb-3">
-            <svg class="size-8 text-vibrant-yellow" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
+    <div class="bg-royal-blue rounded-2xl p-5 sm:p-6 text-white shadow-lg mb-6 text-center">
+        <div class="inline-flex items-center justify-center size-14 rounded-full bg-white/10 mb-3 text-white">
+            <flux:icon.academic-cap variant="outline" class="size-8" />
         </div>
-        <h1 class="text-2xl font-black tracking-wider text-vibrant-yellow uppercase">GARUDA AMARTA</h1>
-        <p class="text-sm text-blue-100 mt-1 font-medium">Sistem Registrasi & Manajemen Atlet Pencak Silat</p>
+        <h1 class="text-xl sm:text-2xl font-black tracking-wider text-white uppercase">GARUDA AMARTA</h1>
+        <p class="text-xs sm:text-sm text-blue-100 mt-1 font-medium">Sistem Registrasi & Manajemen Atlet Pencak Silat</p>
 
         @if (!$isSuccess)
-            <!-- Progress Bar -->
-            <div class="mt-5">
-                <div class="flex justify-between items-center text-xs font-semibold mb-2 text-blue-200">
-                    <span>Langkah {{ $currentStep }} dari {{ $totalSteps }}</span>
-                    <span>
-                        @if($currentStep === 1) Akun & Identitas
-                        @elseif($currentStep === 2) Tingkat & Kategori
-                        @elseif($currentStep === 3) Data Fisik & Wali
-                        @elseif($currentStep === 4) Unggah Berkas Dokumen
-                        @endif
-                    </span>
-                </div>
-                <div class="w-full bg-white/20 h-2.5 rounded-full overflow-hidden">
-                    <div class="bg-vibrant-yellow h-2.5 rounded-full transition-all duration-300" style="width: {{ ($currentStep / $totalSteps) * 100 }}%"></div>
-                </div>
+            <!-- Visual Stepper -->
+            @php
+                $stepLabels = [
+                    1 => 'Akun',
+                    2 => 'Kategori',
+                    3 => 'Data Fisik',
+                    4 => 'Berkas',
+                ];
+            @endphp
+            <div class="mt-6" aria-label="Progress Pendaftaran">
+                <ol class="flex items-center justify-between gap-1.5 sm:gap-2">
+                    @for ($i = 1; $i <= $totalSteps; $i++)
+                        @php
+                            $isDone = $i < $currentStep;
+                            $isActive = $i === $currentStep;
+                        @endphp
+                        <li class="flex-1 flex flex-col items-center min-w-0" aria-current="{{ $isActive ? 'step' : 'false' }}">
+                            <div class="w-full flex items-center">
+                                <div class="h-1 flex-1 rounded-full {{ $i === 1 ? 'bg-transparent' : ($isDone || $isActive ? 'bg-white' : 'bg-white/20') }}"></div>
+                                <div class="shrink-0 size-7 sm:size-8 rounded-full flex items-center justify-center text-xs font-black border-2 transition
+                                    {{ $isDone ? 'bg-blue-100 border-blue-100 text-royal-blue'
+                                       : ($isActive ? 'bg-white border-white text-royal-blue ring-4 ring-white/25 scale-110'
+                                       : 'bg-white/10 border-white/25 text-blue-200') }}">
+                                    @if ($isDone)
+                                        <flux:icon.check variant="micro" class="size-4" />
+                                    @else
+                                        {{ $i }}
+                                    @endif
+                                </div>
+                                <div class="h-1 flex-1 rounded-full {{ $i === $totalSteps ? 'bg-transparent' : ($isDone ? 'bg-white' : 'bg-white/20') }}"></div>
+                            </div>
+                            <span class="mt-1.5 text-[10px] sm:text-[11px] font-semibold truncate max-w-full {{ $isActive ? 'text-white' : 'text-blue-200' }}">
+                                {{ $stepLabels[$i] }}
+                            </span>
+                        </li>
+                    @endfor
+                </ol>
+                <p class="mt-3 text-[11px] sm:text-xs text-blue-100 font-medium">
+                    Langkah {{ $currentStep }} dari {{ $totalSteps }} —
+                    @if($currentStep === 1) Akun & Identitas
+                    @elseif($currentStep === 2) Tingkat & Kategori
+                    @elseif($currentStep === 3) Data Fisik & Wali
+                    @elseif($currentStep === 4) Unggah Berkas Dokumen
+                    @endif
+                </p>
             </div>
         @endif
     </div>
@@ -277,62 +305,43 @@
                         </h2>
                         <p class="text-xs text-neutral-500">Format: JPG/PNG/WebP, maksimal 5MB per berkas. Gambar akan otomatis dioptimasi di server.</p>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <!-- Foto Profil -->
-                            <div class="p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 text-center">
-                                <label class="block text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2">Foto Profil Atlet <span class="text-crimson-red">*</span></label>
-                                @if ($photo)
-                                    <img src="{{ $photo->temporaryUrl() }}" class="w-24 h-32 object-cover mx-auto rounded-lg mb-2 shadow" />
-                                @else
-                                    <div class="size-20 bg-neutral-100 dark:bg-neutral-800 rounded-full mx-auto flex items-center justify-center text-neutral-400 mb-2">
-                                        <svg class="size-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                                    </div>
-                                @endif
-                                <input type="file" wire:model="photo" accept="image/*" class="text-xs text-neutral-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-royal-blue file:text-white hover:file:bg-blue-700" />
-                                @error('photo') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
-                            </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            @php
+                                $uploads = [
+                                    ['field' => 'photo',              'label' => 'Foto Profil Atlet',             'icon' => 'user-circle',  'preview_class' => 'w-24 h-32'],
+                                    ['field' => 'photo_kk',           'label' => 'Foto Kartu Keluarga (KK)',      'icon' => 'users',        'preview_class' => 'w-32 h-20'],
+                                    ['field' => 'photo_akte_kia',     'label' => 'Foto Akte Kelahiran / KIA',     'icon' => 'identification','preview_class' => 'w-32 h-20'],
+                                    ['field' => 'photo_surat_sehat',  'label' => 'Foto Surat Keterangan Sehat',   'icon' => 'heart',        'preview_class' => 'w-32 h-20'],
+                                ];
+                            @endphp
+                            @foreach($uploads as $up)
+                                @php $file = ${$up['field']}; @endphp
+                                <div class="p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 text-center space-y-2.5">
+                                    <label class="block text-sm font-bold text-neutral-800 dark:text-neutral-200">
+                                        {{ $up['label'] }} <span class="text-crimson-red">*</span>
+                                    </label>
 
-                            <!-- Foto Kartu Keluarga -->
-                            <div class="p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 text-center">
-                                <label class="block text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2">Foto Kartu Keluarga (KK) <span class="text-crimson-red">*</span></label>
-                                @if ($photo_kk)
-                                    <img src="{{ $photo_kk->temporaryUrl() }}" class="w-32 h-20 object-cover mx-auto rounded-lg mb-2 shadow" />
-                                @else
-                                    <div class="size-20 bg-neutral-100 dark:bg-neutral-800 rounded-lg mx-auto flex items-center justify-center text-neutral-400 mb-2">
-                                        <svg class="size-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-                                    </div>
-                                @endif
-                                <input type="file" wire:model="photo_kk" accept="image/*" class="text-xs text-neutral-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-royal-blue file:text-white hover:file:bg-blue-700" />
-                                @error('photo_kk') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
-                            </div>
+                                    @if ($file)
+                                        <img src="{{ $file->temporaryUrl() }}" class="{{ $up['preview_class'] }} object-cover mx-auto rounded-lg shadow" alt="Preview {{ $up['label'] }}" />
+                                    @else
+                                        <div class="size-20 bg-neutral-100 dark:bg-neutral-800 rounded-xl mx-auto flex items-center justify-center text-neutral-400">
+                                            <flux:icon :icon="$up['icon']" variant="outline" class="size-10" />
+                                        </div>
+                                    @endif
 
-                            <!-- Foto Akte / KIA -->
-                            <div class="p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 text-center">
-                                <label class="block text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2">Foto Akte Kelahiran / KIA <span class="text-crimson-red">*</span></label>
-                                @if ($photo_akte_kia)
-                                    <img src="{{ $photo_akte_kia->temporaryUrl() }}" class="w-32 h-20 object-cover mx-auto rounded-lg mb-2 shadow" />
-                                @else
-                                    <div class="size-20 bg-neutral-100 dark:bg-neutral-800 rounded-lg mx-auto flex items-center justify-center text-neutral-400 mb-2">
-                                        <svg class="size-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2"/></svg>
-                                    </div>
-                                @endif
-                                <input type="file" wire:model="photo_akte_kia" accept="image/*" class="text-xs text-neutral-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-royal-blue file:text-white hover:file:bg-blue-700" />
-                                @error('photo_akte_kia') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
-                            </div>
+                                    <label class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 rounded-xl bg-royal-blue hover:bg-blue-700 text-white font-semibold text-xs cursor-pointer transition">
+                                        <flux:icon.cloud-arrow-up variant="outline" class="size-4" />
+                                        <span>{{ $file ? 'Ganti Berkas' : 'Pilih Berkas' }}</span>
+                                        <input type="file" wire:model="{{ $up['field'] }}" accept="image/*" class="sr-only" />
+                                    </label>
 
-                            <!-- Foto Surat Sehat -->
-                            <div class="p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 text-center">
-                                <label class="block text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2">Foto Surat Keterangan Sehat <span class="text-crimson-red">*</span></label>
-                                @if ($photo_surat_sehat)
-                                    <img src="{{ $photo_surat_sehat->temporaryUrl() }}" class="w-32 h-20 object-cover mx-auto rounded-lg mb-2 shadow" />
-                                @else
-                                    <div class="size-20 bg-neutral-100 dark:bg-neutral-800 rounded-lg mx-auto flex items-center justify-center text-neutral-400 mb-2">
-                                        <svg class="size-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                    <div wire:loading wire:target="{{ $up['field'] }}" class="text-[11px] text-neutral-500">
+                                        Mengunggah...
                                     </div>
-                                @endif
-                                <input type="file" wire:model="photo_surat_sehat" accept="image/*" class="text-xs text-neutral-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-royal-blue file:text-white hover:file:bg-blue-700" />
-                                @error('photo_surat_sehat') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
-                            </div>
+
+                                    @error($up['field']) <p class="text-xs text-crimson-red">{{ $message }}</p> @enderror
+                                </div>
+                            @endforeach
                         </div>
                     </div>
                 @endif

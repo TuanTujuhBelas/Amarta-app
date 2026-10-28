@@ -27,10 +27,12 @@
     --color-accent-content: var(--color-neutral-800);
     --color-accent-foreground: var(--color-white);
 
-    /* Garuda Amarta Brand Colors */
+    /* Garuda Amarta Brand Colors (toned down — corporate / monochrome) */
     --color-royal-blue: #2B54C6;
-    --color-vibrant-yellow: #FFE500;
-    --color-crimson-red: #E52320;
+    /* vibrant-yellow di-mute jadi gold tenang; penggunaan utama digeser ke putih / blue-100 di template */
+    --color-vibrant-yellow: #C9A868;
+    /* crimson-red dilembutkan jadi brick/muted red */
+    --color-crimson-red: #B64238;
     --color-deep-black: #111111;
     --color-light-gray: #F8FAFC;
 }

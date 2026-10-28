@@ -1,17 +1,15 @@
-<div class="w-full max-w-xl mx-auto">
+<div class="w-full max-w-2xl mx-auto">
     <!-- Header Garuda Amarta -->
-    <div class="bg-royal-blue rounded-2xl p-6 text-white shadow-lg mb-6 text-center">
-        <div class="inline-flex items-center justify-center size-14 rounded-full bg-white/10 mb-3">
-            <svg class="size-8 text-vibrant-yellow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-            </svg>
+    <div class="bg-royal-blue rounded-2xl p-5 sm:p-6 text-white shadow-lg mb-6 text-center">
+        <div class="inline-flex items-center justify-center size-14 rounded-full bg-white/10 mb-3 text-white">
+            <flux:icon.identification variant="outline" class="size-8" />
         </div>
-        <h1 class="text-2xl font-black tracking-wider text-vibrant-yellow uppercase">GARUDA AMARTA</h1>
-        <p class="text-sm text-blue-100 mt-1 font-medium">Registrasi Akun Pelatih / Instruktur Pencak Silat</p>
+        <h1 class="text-xl sm:text-2xl font-black tracking-wider text-white uppercase">GARUDA AMARTA</h1>
+        <p class="text-xs sm:text-sm text-blue-100 mt-1 font-medium">Registrasi Akun Pelatih / Instruktur Pencak Silat</p>
 
         @if (!$isSuccess)
-            <div class="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold text-vibrant-yellow border border-white/20">
-                <span>🔒</span>
+            <div class="mt-4 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-[11px] sm:text-xs font-semibold text-white border border-white/20">
+                <flux:icon.lock-closed variant="micro" class="size-3.5" />
                 <span>Tautan Pendaftaran Khusus Pelatih Resmi</span>
             </div>
         @endif
@@ -104,17 +102,22 @@
                 </div>
 
                 <!-- Foto Profil Pelatih -->
-                <div class="p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 text-center">
-                    <label class="block text-sm font-bold text-neutral-800 dark:text-neutral-200 mb-2">Foto Profil Pelatih (Opsional)</label>
+                <div class="p-4 rounded-xl border-2 border-dashed border-neutral-300 dark:border-neutral-700 text-center space-y-2.5">
+                    <label class="block text-sm font-bold text-neutral-800 dark:text-neutral-200">Foto Profil Pelatih <span class="text-neutral-400 font-normal">(Opsional)</span></label>
                     @if ($photo)
-                        <img src="{{ $photo->temporaryUrl() }}" class="size-24 object-cover mx-auto rounded-full mb-2 shadow" />
+                        <img src="{{ $photo->temporaryUrl() }}" class="size-24 object-cover mx-auto rounded-full shadow" alt="Preview Foto Profil Pelatih" />
                     @else
-                        <div class="size-20 bg-neutral-100 dark:bg-neutral-800 rounded-full mx-auto flex items-center justify-center text-neutral-400 mb-2">
-                            <svg class="size-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <div class="size-20 bg-neutral-100 dark:bg-neutral-800 rounded-full mx-auto flex items-center justify-center text-neutral-400">
+                            <flux:icon.user-circle variant="outline" class="size-10" />
                         </div>
                     @endif
-                    <input type="file" wire:model="photo" accept="image/*" class="text-xs text-neutral-500 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-royal-blue file:text-white hover:file:bg-blue-700" />
-                    @error('photo') <p class="text-xs text-crimson-red mt-1">{{ $message }}</p> @enderror
+                    <label class="w-full min-h-[44px] inline-flex items-center justify-center gap-2 px-4 rounded-xl bg-royal-blue hover:bg-blue-700 text-white font-semibold text-xs cursor-pointer transition">
+                        <flux:icon.cloud-arrow-up variant="outline" class="size-4" />
+                        <span>{{ $photo ? 'Ganti Foto' : 'Pilih Foto' }}</span>
+                        <input type="file" wire:model="photo" accept="image/*" class="sr-only" />
+                    </label>
+                    <div wire:loading wire:target="photo" class="text-[11px] text-neutral-500">Mengunggah...</div>
+                    @error('photo') <p class="text-xs text-crimson-red">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="pt-4 border-t border-neutral-200 dark:border-neutral-800">
